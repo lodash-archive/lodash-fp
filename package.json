@@ -19,6 +19,10 @@
   "dependencies": {
     "lodash-compat": "^3.0.0"
   },
+  "devDependencies": {
+    "qunit-extras": "~1.4.0",
+    "qunitjs": "~1.16.0"
+  },
   "files": [
     "LICENSE.txt",
     "index.js"
