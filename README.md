@@ -1,4 +1,4 @@
-# lodash-fp
+# lodash-fp v0.1.0
 
 [lodash](https://lodash.com/) with auto-curried iteratee-first methods.
 
