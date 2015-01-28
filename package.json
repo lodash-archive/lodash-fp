@@ -1,7 +1,7 @@
 {
   "name": "lodash-fp",
   "version": "0.1.0",
-  "description": "lodash with more functional fun for everyone.",
+  "description": "lodash with more functional fun.",
   "icon": "https://lodash.com/icon.svg",
   "license": "MIT",
   "main": "index.js",
