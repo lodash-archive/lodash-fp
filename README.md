@@ -1,4 +1,4 @@
-# lodash-fp v0.1.0
+# lodash-fp v0.2.0
 
 [lodash](https://lodash.com/) with auto-curried iteratee-first methods.
 
@@ -45,7 +45,7 @@ _(_.range(0, 10))
 // => [0, 4]
 ```
 
-See the [package source](https://github.com/lodash/lodash-fp/tree/0.1.0) for more details.
+See the [package source](https://github.com/lodash/lodash-fp/tree/0.2.0) for more details.
 
 **Note:**<br>
 Don’t assign values to the [special variable](http://nodejs.org/api/repl.html#repl_repl_features) `_` when in the REPL.<br>
