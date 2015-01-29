@@ -172,6 +172,24 @@ QUnit.module('fp.range');
 
 /*----------------------------------------------------------------------------*/
 
+QUnit.module('fp.random');
+
+(function() {
+  var array = Array(1000);
+
+  test('should support a `min` and `max` argument', 1, function() {
+    var min = 5,
+        max = 10;
+
+    ok(_.some(array, function() {
+      var result = fp.random(min)(max);
+      return result >= min && result <= max;
+    }));
+  });
+}());
+
+/*----------------------------------------------------------------------------*/
+
 QUnit.module('fp.maxBy and fp.minBy');
 
 _.each(['maxBy', 'minBy'], function(methodName, index) {

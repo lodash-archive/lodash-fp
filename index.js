@@ -50,7 +50,8 @@ var keyMap = {
 
 /** Used to track methods that skip `_.rearg`. */
 var skipReargMap = {
-  'range': true
+  'range': true,
+  'random': true
 };
 
 /** The source object to transform and assign to `_`. */
