@@ -57,7 +57,6 @@ var skipReargMap = {
 /** The source object to transform and assign to `_`. */
 var source = {
   'callback': function(func, thisArg, argCount) {
-    argCount = argCount > 2 ? (argCount - 2) : 1;
     return ary(callback(func, thisArg), argCount);
   }
 };
