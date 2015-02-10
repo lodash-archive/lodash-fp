@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "qunit-extras": "~1.4.0",
-    "qunitjs": "~1.16.0"
+    "qunitjs": "~1.17.0"
   },
   "files": [
     "index.js"
