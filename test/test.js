@@ -33,23 +33,25 @@ var aliasMap = {
 };
 
 /** Used to map ary to method names. */
-var aryMap = {
+var aryMethodMap = {
   1: (
-    'clone,create,flatten,invert,max,memoize,min,mixin,sample,template,trim,' +
-    'trimLeft,trimRight,uniq,words').split(','),
+    'attempt,clone,create,flatten,invert,max,memoize,min,mixin,sample,template,' +
+    'trim,trimLeft,trimRight,uniq,words').split(','),
   2: (
     'after,ary,assign,at,before,bind,bindKey,chunk,countBy,debounce,defaults,' +
     'delay,difference,drop,dropRight,dropRightWhile,dropWhile,endsWith,every,' +
     'filter,find,findIndex,findKey,findLast,findLastIndex,findLastKey,findWhere,' +
     'forEach,forEachRight,forIn,forInRight,forOwn,forOwn,forOwnRight,groupBy,' +
     'has,includes,indexBy,indexOf,intersection,invoke,isEqual,isMatch,lastIndexOf,' +
-    'map,mapValues,maxBy,merge,minBy,omit,pad,padLeft,padRight,parseInt,partition,' +
-    'pick,pluck,pull,pullAt,random,range,rearg,reject,remove,repeat,result,' +
-    'runInContext,some,sortBy,sortByAll,sortedIndex,sortedLastIndex,startsWith,' +
-    'take,takeRight,takeRightWhile,takeWhile,throttle,times,trunc,union,uniqBy,' +
-    'uniqueId,where,without,wrap,xor,zip,zipObject').split(','),
+    'map,mapValues,matchesProperty,maxBy,merge,minBy,omit,pad,padLeft,padRight,' +
+    'parseInt,partition,pick,pluck,pull,pullAt,random,range,rearg,reject,remove,' +
+    'repeat,result,runInContext,some,sortBy,sortByAll,sortedIndex,sortedLastIndex,' +
+    'startsWith,take,takeRight,takeRightWhile,takeWhile,throttle,times,trunc,' +
+    'union,uniqBy,uniqueId,where,without,wrap,xor,zip,zipObject').split(','),
   3:
-    'slice,reduce,reduceRight,transform'.split(',')
+    'slice,reduce,reduceRight,transform'.split(','),
+  4:
+    ['fill']
 };
 
 /*----------------------------------------------------------------------------*/
@@ -76,9 +78,9 @@ QUnit.module('method ary caps');
 (function() {
   test('should have a cap of 1', 1, function() {
     var exceptions = ['memoize', 'mixin', 'template'],
-        expected = _.map(aryMap[1], _.constant(true));
+        expected = _.map(aryMethodMap[1], _.constant(true));
 
-    var actual = _.map(aryMap[1], function(methodName) {
+    var actual = _.map(aryMethodMap[1], function(methodName) {
       var arg = methodName == 'memoize' ? _.noop : '',
           result = fp[methodName](arg),
           type = typeof result;
@@ -92,10 +94,10 @@ QUnit.module('method ary caps');
   });
 
   test('should have a cap of 2', 1, function() {
-    var exceptions = ['after', 'ary', 'before', 'bind', 'bindKey', 'debounce', 'delay', 'rearg', 'runInContext', 'throttle', 'wrap'],
-        expected = _.map(aryMap[2], _.constant(true));
+    var exceptions = ['after', 'ary', 'before', 'bind', 'bindKey', 'debounce', 'delay', 'matchesProperty', 'rearg', 'runInContext', 'throttle', 'wrap'],
+        expected = _.map(aryMethodMap[2], _.constant(true));
 
-    var actual = _.map(aryMap[2], function(methodName) {
+    var actual = _.map(aryMethodMap[2], function(methodName) {
       var isException = _.includes(exceptions, methodName),
           arg = isException ? [_.noop, _.noop] : [1, []],
           result = fp[methodName](arg[0])(arg[1]),
@@ -110,9 +112,9 @@ QUnit.module('method ary caps');
   });
 
   test('should have a cap of 3', 1, function() {
-    var expected = _.map(aryMap[3], _.constant(true));
+    var expected = _.map(aryMethodMap[3], _.constant(true));
 
-    var actual = _.map(aryMap[3], function(methodName) {
+    var actual = _.map(aryMethodMap[3], function(methodName) {
       var result = fp[methodName](0)(1)([]);
       return typeof result != 'function';
     });
