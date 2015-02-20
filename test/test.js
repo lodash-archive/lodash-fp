@@ -51,7 +51,7 @@ var aryMethodMap = {
   3:
     'slice,reduce,reduceRight,transform'.split(','),
   4:
-    ['fill']
+    ['fill', 'inRange']
 };
 
 /*----------------------------------------------------------------------------*/

@@ -39,7 +39,7 @@ var aryMethodMap = {
   3:
     'slice,reduce,reduceRight,transform'.split(','),
   4:
-    ['fill']
+    ['fill', 'inRange']
 };
 
 /** Used to map ary to rearg configs. */
