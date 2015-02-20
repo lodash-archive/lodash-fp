@@ -1,6 +1,6 @@
 {
   "name": "lodash-fp",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "lodash with more functional fun.",
   "icon": "https://lodash.com/icon.svg",
   "license": "MIT",
@@ -24,6 +24,7 @@
     "qunitjs": "~1.17.0"
   },
   "files": [
-    "index.js"
+    "index.js",
+    "mixin.js"
   ]
 }
