@@ -23,10 +23,10 @@ var aliasMap = {
 /** Used to map ary to method names. */
 var aryMethodMap = {
   1: (
-    'attempt,clone,create,flatten,invert,max,memoize,min,mixin,sample,template,' +
+    'attempt,clone,create,curry,flatten,invert,max,memoize,min,mixin,sample,template,' +
     'trim,trimLeft,trimRight,uniq,words').split(','),
   2: (
-    'after,ary,assign,at,before,bind,bindKey,chunk,countBy,debounce,defaults,' +
+    'add,after,ary,assign,at,before,bind,bindKey,chunk,countBy,curryN,debounce,defaults,' +
     'delay,difference,drop,dropRight,dropRightWhile,dropWhile,endsWith,every,' +
     'filter,find,findIndex,findKey,findLast,findLastIndex,findLastKey,findWhere,' +
     'forEach,forEachRight,forIn,forInRight,forOwn,forOwn,forOwnRight,groupBy,' +
@@ -51,6 +51,7 @@ var aryReargMap = {
 
 /** Used to map keys to other keys. */
 var keyMap = {
+  'curryN': 'curry',
   'maxBy': 'max',
   'minBy': 'min',
   'uniqBy': 'uniq'
