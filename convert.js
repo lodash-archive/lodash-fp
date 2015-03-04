@@ -66,14 +66,15 @@ var skipReargMap = {
 /*----------------------------------------------------------------------------*/
 
 /**
- * Wraps `func` of `name` to create an auto-curried iteratee-first version. If
- * `name` is an object the methods on it will be wrapped and the object returned.
+ * Converts `func` of `name` to an auto-curried iteratee-first version. If `name`
+ * is an object the methods on it will be converted and the object returned.
  *
  * @param {string} name The name of the function to wrap.
  * @param {Function} func The function to wrap.
- * @returns {Function|Object} Returns the wrapped function or object of wrapped functions.
+ * @returns {Function|Object} Returns the new converted function or object of
+ *  converted functions.
  */
-function mixin(name, func) {
+function convert(name, func) {
   if (!func) {
     func = name;
     name = null;
@@ -177,4 +178,4 @@ function mixin(name, func) {
   return _;
 }
 
-module.exports = mixin;
+module.exports = convert;

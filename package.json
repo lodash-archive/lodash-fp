@@ -24,7 +24,7 @@
     "qunitjs": "~1.17.0"
   },
   "files": [
-    "index.js",
-    "mixin.js"
+    "convert.js",
+    "index.js"
   ]
 }

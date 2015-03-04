@@ -1,1 +1,1 @@
-module.exports = require('./mixin')(require('lodash-compat').runInContext());
+module.exports = require('./convert')(require('lodash-compat').runInContext());
