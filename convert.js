@@ -33,11 +33,11 @@ var aryMethodMap = {
     'has,includes,indexBy,indexOf,intersection,invoke,isEqual,isMatch,lastIndexOf,' +
     'map,mapValues,matchesProperty,maxBy,merge,minBy,omit,pad,padLeft,padRight,' +
     'parseInt,partition,pick,pluck,pull,pullAt,random,range,rearg,reject,remove,' +
-    'repeat,result,runInContext,some,sortBy,sortByAll,sortedIndex,sortedLastIndex,' +
-    'startsWith,take,takeRight,takeRightWhile,takeWhile,throttle,times,trunc,' +
-    'union,uniqBy,uniqueId,where,without,wrap,xor,zip,zipObject').split(','),
+    'repeat,result,some,sortBy,sortByAll,sortedIndex,sortedLastIndex,startsWith,' +
+    'take,takeRight,takeRightWhile,takeWhile,throttle,times,trunc,union,uniqBy,' +
+    'uniqueId,where,without,wrap,xor,zip,zipObject').split(','),
   3:
-    'slice,reduce,reduceRight,transform'.split(','),
+    'slice,sortByOrder,reduce,reduceRight,transform'.split(','),
   4:
     ['fill', 'inRange']
 };
