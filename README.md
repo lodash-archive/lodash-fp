@@ -16,12 +16,6 @@ In Node.js/io.js:
 ```js
 var _ = require('lodash-fp');
 
-_.filter('a')([{ 'a': 0 }, { 'a': 1 }]);
-// => [{ 'a': 1 }]
-
-_.map(parseInt)(['6', '08', '10']);
-// => [6, 8, 10]
-
 var items = [
   { 'value': _.constant('a') },
   { 'value': _.constant(['a', 'b']) },
