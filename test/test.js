@@ -35,21 +35,21 @@ var aliasMap = {
 /** Used to map ary to method names. */
 var aryMethodMap = {
   1: (
-    'attempt,clone,create,flatten,invert,max,memoize,min,mixin,sample,template,' +
+    'attempt,clone,create,curry,flatten,invert,max,memoize,min,mixin,sample,template,' +
     'trim,trimLeft,trimRight,uniq,words').split(','),
   2: (
-    'after,ary,assign,at,before,bind,bindKey,chunk,countBy,debounce,defaults,' +
+    'add,after,ary,assign,at,before,bind,bindKey,chunk,countBy,curryN,debounce,defaults,' +
     'delay,difference,drop,dropRight,dropRightWhile,dropWhile,endsWith,every,' +
     'filter,find,findIndex,findKey,findLast,findLastIndex,findLastKey,findWhere,' +
     'forEach,forEachRight,forIn,forInRight,forOwn,forOwn,forOwnRight,groupBy,' +
     'has,includes,indexBy,indexOf,intersection,invoke,isEqual,isMatch,lastIndexOf,' +
     'map,mapValues,matchesProperty,maxBy,merge,minBy,omit,pad,padLeft,padRight,' +
     'parseInt,partition,pick,pluck,pull,pullAt,random,range,rearg,reject,remove,' +
-    'repeat,result,runInContext,some,sortBy,sortByAll,sortedIndex,sortedLastIndex,' +
-    'startsWith,take,takeRight,takeRightWhile,takeWhile,throttle,times,trunc,' +
-    'union,uniqBy,uniqueId,where,without,wrap,xor,zip,zipObject').split(','),
+    'repeat,result,some,sortBy,sortByAll,sortedIndex,sortedLastIndex,startsWith,' +
+    'take,takeRight,takeRightWhile,takeWhile,throttle,times,trunc,union,uniqBy,' +
+    'uniqueId,where,without,wrap,xor,zip,zipObject').split(','),
   3:
-    'slice,reduce,reduceRight,transform'.split(','),
+    'slice,sortByOrder,reduce,reduceRight,transform'.split(','),
   4:
     ['fill', 'inRange']
 };
@@ -77,11 +77,12 @@ QUnit.module('method ary caps');
 
 (function() {
   test('should have a cap of 1', 1, function() {
-    var exceptions = ['memoize', 'mixin', 'template'],
+    var funcMethods = ['curry', 'memoize'],
+        exceptions = funcMethods.concat('mixin', 'template'),
         expected = _.map(aryMethodMap[1], _.constant(true));
 
     var actual = _.map(aryMethodMap[1], function(methodName) {
-      var arg = methodName == 'memoize' ? _.noop : '',
+      var arg = _.includes(funcMethods, methodName) ? _.noop : '',
           result = fp[methodName](arg),
           type = typeof result;
 
@@ -94,16 +95,17 @@ QUnit.module('method ary caps');
   });
 
   test('should have a cap of 2', 1, function() {
-    var exceptions = ['after', 'ary', 'before', 'bind', 'bindKey', 'debounce', 'delay', 'matchesProperty', 'rearg', 'runInContext', 'throttle', 'wrap'],
+    var funcMethods = ['after', 'ary', 'before', 'bind', 'bindKey', 'curryN', 'debounce', 'delay', 'rearg', 'throttle', 'wrap'],
+        exceptions = _.without(funcMethods.concat('matchesProperty'), 'delay'),
         expected = _.map(aryMethodMap[2], _.constant(true));
 
     var actual = _.map(aryMethodMap[2], function(methodName) {
       var isException = _.includes(exceptions, methodName),
-          arg = isException ? [_.noop, _.noop] : [1, []],
+          arg = _.includes(funcMethods, methodName) ? [methodName == 'curryN' ? 1 : _.noop, _.noop] : [1, []],
           result = fp[methodName](arg[0])(arg[1]),
           type = typeof result;
 
-      return (isException && methodName != 'delay')
+      return _.includes(exceptions, methodName)
         ? type == 'function'
         : type != 'function';
     });
@@ -159,6 +161,27 @@ QUnit.module('methods that use `indexOf`');
 
     actual = fp.pull('b', array);
     deepEqual(array, ['a', 'c'], 'fp.pull');
+  });
+}());
+
+/*----------------------------------------------------------------------------*/
+
+QUnit.module('fp.curry');
+
+(function() {
+  test('should accept only a `func` param', 1, function() {
+    raises(function() { fp.curry(1, _.noop); }, TypeError);
+  });
+}());
+
+/*----------------------------------------------------------------------------*/
+
+QUnit.module('fp.curryN');
+
+(function() {
+  test('should accept an `arity` param', 1, function() {
+    var actual = fp.curryN(1, function(a, b) { return [a, b]; })('a');
+    deepEqual(actual, ['a', undefined]);
   });
 }());
 
