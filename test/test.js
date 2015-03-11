@@ -167,6 +167,28 @@ QUnit.module('methods that use `indexOf`');
 
 /*----------------------------------------------------------------------------*/
 
+QUnit.module('fp.callback');
+
+(function() {
+  test('should return a callback with capped params', 1, function() {
+    var func = fp.callback(function(a, b, c) { return [a, b, c]; }, undefined, 3);
+    deepEqual(func(1, 2, 3), [1, undefined, undefined]);
+  });
+
+  test('should convert by name', 1, function() {
+    var callback = convert('callback', _.callback),
+        func = callback(function(a, b, c) { return [a, b, c]; }, undefined, 3);
+
+    deepEqual(func(1, 2, 3), [1, undefined, undefined]);
+  });
+
+  test('should be aliased', 1, function() {
+    strictEqual(fp.iteratee, fp.callback);
+  });
+}());
+
+/*----------------------------------------------------------------------------*/
+
 QUnit.module('fp.curry');
 
 (function() {
