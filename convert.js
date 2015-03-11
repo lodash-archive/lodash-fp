@@ -63,6 +63,9 @@ var skipReargMap = {
   'random': true
 };
 
+/** Used to iterate `aryMethodMap` keys */
+var caps = ['1', '2', '3', '4'];
+
 /*----------------------------------------------------------------------------*/
 
 /**
@@ -90,28 +93,48 @@ function convert(name, func) {
     'ary': require('lodash-compat/function/ary'),
     'callback': require('lodash-compat/utility/callback'),
     'curry': require('lodash-compat/function/curry'),
+    'each': require('lodash-compat/internal/arrayEach'),
     'rearg': require('lodash-compat/function/rearg')
   };
 
-  var wrap = function(name, func) {
-    var cap = 0,
-        capLimit = 5;
+  var ary = _.ary,
+      curry = _.curry,
+      each = _.each,
+      rearg = _.rearg;
 
-    while (++cap < capLimit) {
-      var names = aryMethodMap[cap],
-          nameIndex = -1,
-          namesLength = names.length;
-
-      while (++nameIndex < namesLength) {
-        if (names[nameIndex] === name) {
-          if (cap > 1 && !skipReargMap[name]) {
-            func = _.rearg(func, aryReargMap[cap]);
-          }
-          return _.curry(_.ary(func, cap), cap);
-        }
-      }
+  var wrappers = {
+    'callback': function(callback) {
+      return function(func, thisArg, argCount) {
+        argCount = argCount > 2 ? (argCount - 2) : 1;
+        return ary(callback(func, thisArg), argCount);
+      };
+    },
+    'runInContext': function(runInContext) {
+      return function(context) {
+        return convert(runInContext(context));
+      };
     }
-    return func;
+  };
+
+  var wrap = function(name, func) {
+    var wrapper = wrappers[name];
+    if (wrapper) {
+      return wrapper(func);
+    }
+    var result;
+    each(caps, function(cap) {
+      each(aryMethodMap[cap], function(otherName) {
+        if (name == otherName) {
+          result = (cap > 1 && !skipReargMap[name])
+            ? rearg(func, aryReargMap[cap])
+            : func;
+
+          return !(result = curry(ary(result, cap), cap));
+        }
+      });
+      return !result;
+    });
+    return result || func;
   };
 
   // Disable custom `_.indexOf` use by these methods.
@@ -131,50 +154,26 @@ function convert(name, func) {
   if (!(isLib || isObj)) {
     return wrap(name, func);
   }
-  var ary = _.ary,
-      callback = _.callback,
-      cap = 0,
-      capLimit = 5,
-      pairs = [];
-
-  pairs.push(['callback', function(func, thisArg, argCount) {
-    argCount = argCount > 2 ? (argCount - 2) : 1;
-    return ary(callback(func, thisArg), argCount);
-  }]);
-
-  pairs.push(['iteratee', pairs[0][1]]);
-
-  while (++cap < capLimit) {
+  var pairs = [];
+  each(caps, function(cap) {
     // Iterate over methods for the current ary cap.
-    var names = aryMethodMap[cap],
-        nameIndex = -1,
-        namesLength = names.length;
-
-    while (++nameIndex < namesLength) {
-      var otherName = names[nameIndex],
-          fn = _[keyMap[otherName] || otherName];
-
-      if (fn) {
+    each(aryMethodMap[cap], function(name) {
+      var func = _[keyMap[name] || name];
+      if (func) {
         // Wrap the lodash method and its aliases.
-        var wrapped = wrap(otherName, fn),
-            allIndex = -1,
-            allNames = [otherName].concat(aliasMap[otherName] || []),
-            allLength = allNames.length;
-
-        while (++allIndex < allLength) {
-          pairs.push([allNames[allIndex], wrapped]);
-        }
+        var wrapped = wrap(name, func);
+        pairs.push([name, wrapped]);
+        each(aliasMap[name], function(alias) { pairs.push([alias, wrapped]); });
       }
-    }
-  }
-  var pairsIndex = -1,
-      pairsLength = pairs.length;
+    });
+  });
 
   // Assign to `_` leaving `_.prototype` unchanged to allow chaining.
-  while (++pairsIndex < pairsLength) {
-    var pair = pairs[pairsIndex];
-    _[pair[0]] = pair[1];
-  }
+  _.callback = wrappers.callback(_.callback);
+  _.iteratee = _.callback;
+  _.runInContext = wrappers.runInContext(_.runInContext);
+
+  each(pairs, function(pair) { _[pair[0]] = pair[1]; });
   return _;
 }
 
