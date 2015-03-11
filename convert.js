@@ -137,23 +137,22 @@ function convert(name, func) {
     return result || func;
   };
 
-  // Disable custom `_.indexOf` use by these methods.
-  if (isLib) {
-    _.mixin({
-      'difference': require('lodash-compat/array/difference'),
-      'includes': require('lodash-compat/collection/includes'),
-      'intersection': require('lodash-compat/array/intersection'),
-      'omit': require('lodash-compat/object/omit'),
-      'pull': require('lodash-compat/array/pull'),
-      'union': require('lodash-compat/array/union'),
-      'uniq': require('lodash-compat/array/uniq'),
-      'without': require('lodash-compat/array/without'),
-      'xor': require('lodash-compat/array/xor')
-    });
-  }
-  if (!(isLib || isObj)) {
+  if (!isLib) {
     return wrap(name, func);
   }
+  // Disable custom `_.indexOf` use by these methods.
+  _.mixin({
+    'difference': require('lodash-compat/array/difference'),
+    'includes': require('lodash-compat/collection/includes'),
+    'intersection': require('lodash-compat/array/intersection'),
+    'omit': require('lodash-compat/object/omit'),
+    'pull': require('lodash-compat/array/pull'),
+    'union': require('lodash-compat/array/union'),
+    'uniq': require('lodash-compat/array/uniq'),
+    'without': require('lodash-compat/array/without'),
+    'xor': require('lodash-compat/array/xor')
+  });
+
   var pairs = [];
   each(caps, function(cap) {
     // Iterate over methods for the current ary cap.
