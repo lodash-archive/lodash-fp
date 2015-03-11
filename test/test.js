@@ -1,5 +1,6 @@
 var _ = require('lodash-compat'),
-    fp = require('../index.js');
+    fp = require('../index.js'),
+    convert = require('../convert.js');
 
 global.QUnit = require('qunitjs');
 require('qunit-extras').runInContext(global);
@@ -240,6 +241,21 @@ _.each(['maxBy', 'minBy'], function(methodName, index) {
     deepEqual(args, [1]);
   });
 });
+
+/*----------------------------------------------------------------------------*/
+
+QUnit.module('fp.runInContext');
+
+(function() {
+  test('should return a converted lodash instance', 1, function() {
+    ok(typeof fp.runInContext().curryN == 'function');
+  });
+
+  test('should convert by name', 1, function() {
+    var runInContext = convert('runInContext', _.runInContext);
+    ok(typeof runInContext().curryN == 'function');
+  });
+}());
 
 /*----------------------------------------------------------------------------*/
 
