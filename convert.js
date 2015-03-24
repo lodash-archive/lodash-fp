@@ -23,19 +23,19 @@ var aliasMap = {
 /** Used to map ary to method names. */
 var aryMethodMap = {
   1: (
-    'attempt,clone,create,curry,flatten,invert,max,memoize,min,mixin,sample,template,' +
-    'trim,trimLeft,trimRight,uniq,words').split(','),
+    'attempt,clone,create,curry,flatten,invert,max,memoize,min,mixin,sample,sum,' +
+    'template,trim,trimLeft,trimRight,uniq,words').split(','),
   2: (
-    'add,after,ary,assign,at,before,bind,bindKey,chunk,countBy,curryN,debounce,defaults,' +
-    'delay,difference,drop,dropRight,dropRightWhile,dropWhile,endsWith,every,' +
-    'filter,find,findIndex,findKey,findLast,findLastIndex,findLastKey,findWhere,' +
-    'forEach,forEachRight,forIn,forInRight,forOwn,forOwn,forOwnRight,groupBy,' +
+    'add,after,ary,assign,at,before,bind,bindKey,chunk,countBy,curryN,debounce,' +
+    'defaults,delay,difference,drop,dropRight,dropRightWhile,dropWhile,endsWith,' +
+    'every,filter,find,findIndex,findKey,findLast,findLastIndex,findLastKey,' +
+    'findWhere,forEach,forEachRight,forIn,forInRight,forOwn,forOwnRight,groupBy,' +
     'has,includes,indexBy,indexOf,intersection,invoke,isEqual,isMatch,lastIndexOf,' +
     'map,mapValues,matchesProperty,maxBy,merge,minBy,omit,pad,padLeft,padRight,' +
     'parseInt,partition,pick,pluck,pull,pullAt,random,range,rearg,reject,remove,' +
     'repeat,result,some,sortBy,sortByAll,sortedIndex,sortedLastIndex,startsWith,' +
-    'take,takeRight,takeRightWhile,takeWhile,throttle,times,trunc,union,uniqBy,' +
-    'uniqueId,where,without,wrap,xor,zip,zipObject').split(','),
+    'sumBy,take,takeRight,takeRightWhile,takeWhile,throttle,times,trunc,union,' +
+    'uniqBy,uniqueId,where,without,wrap,xor,zip,zipObject').split(','),
   3:
     'slice,sortByOrder,reduce,reduceRight,transform'.split(','),
   4:
@@ -49,11 +49,23 @@ var aryReargMap = {
   4: [3, 2, 0, 1]
 };
 
+/** Used to track methods that accept an iteratee. */
+var iterateeMap = {
+  2: (
+    'dropRightWhile,dropWhile,every,filter,find,findIndex,findKey,findLast,' +
+    'findLastIndex,findLastKey,forEach,forEachRight,forIn,forInRight,forOwn,' +
+    'forOwnRight,groupBy,indexBy,map,mapValues,maxBy,minBy,omit,partition,pick,' +
+    'remove,some,sortBy,sortByAll,sumBy,takeRightWhile,takeWhile,times,uniqBy,').split(','),
+  3:
+    'sortByOrder,reduce,reduceRight,transform'.split(',')
+};
+
 /** Used to map keys to other keys. */
 var keyMap = {
   'curryN': 'curry',
   'maxBy': 'max',
   'minBy': 'min',
+  'sumBy': 'sum',
   'uniqBy': 'uniq'
 };
 
