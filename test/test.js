@@ -36,19 +36,19 @@ var aliasMap = {
 /** Used to map ary to method names. */
 var aryMethodMap = {
   1: (
-    'attempt,clone,create,curry,flatten,invert,max,memoize,min,mixin,sample,template,' +
-    'trim,trimLeft,trimRight,uniq,words').split(','),
+    'attempt,clone,create,curry,flatten,invert,max,memoize,min,mixin,restParam,' +
+    'sample,sum,template,trim,trimLeft,trimRight,uniq,words').split(','),
   2: (
-    'add,after,ary,assign,at,before,bind,bindKey,chunk,countBy,curryN,debounce,defaults,' +
-    'delay,difference,drop,dropRight,dropRightWhile,dropWhile,endsWith,every,' +
-    'filter,find,findIndex,findKey,findLast,findLastIndex,findLastKey,findWhere,' +
-    'forEach,forEachRight,forIn,forInRight,forOwn,forOwn,forOwnRight,groupBy,' +
+    'add,after,ary,assign,at,before,bind,bindKey,chunk,countBy,curryN,debounce,' +
+    'defaults,delay,difference,drop,dropRight,dropRightWhile,dropWhile,endsWith,' +
+    'every,filter,find,findIndex,findKey,findLast,findLastIndex,findLastKey,' +
+    'findWhere,forEach,forEachRight,forIn,forInRight,forOwn,forOwnRight,groupBy,' +
     'has,includes,indexBy,indexOf,intersection,invoke,isEqual,isMatch,lastIndexOf,' +
     'map,mapValues,matchesProperty,maxBy,merge,minBy,omit,pad,padLeft,padRight,' +
     'parseInt,partition,pick,pluck,pull,pullAt,random,range,rearg,reject,remove,' +
     'repeat,result,some,sortBy,sortByAll,sortedIndex,sortedLastIndex,startsWith,' +
-    'take,takeRight,takeRightWhile,takeWhile,throttle,times,trunc,union,uniqBy,' +
-    'uniqueId,where,without,wrap,xor,zip,zipObject').split(','),
+    'sumBy,take,takeRight,takeRightWhile,takeWhile,throttle,times,trunc,union,' +
+    'uniqBy,uniqueId,where,without,wrap,xor,zip,zipObject').split(','),
   3:
     'slice,sortByOrder,reduce,reduceRight,transform'.split(','),
   4:
@@ -78,7 +78,7 @@ QUnit.module('method ary caps');
 
 (function() {
   test('should have a cap of 1', 1, function() {
-    var funcMethods = ['curry', 'memoize'],
+    var funcMethods = ['curry', 'memoize', 'restParam'],
         exceptions = funcMethods.concat('mixin', 'template'),
         expected = _.map(aryMethodMap[1], _.constant(true));
 
