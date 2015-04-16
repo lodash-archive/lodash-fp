@@ -23,8 +23,8 @@ var aliasMap = {
 /** Used to map ary to method names. */
 var aryMethodMap = {
   1: (
-    'attempt,clone,create,curry,flatten,invert,max,memoize,min,mixin,restParam,' +
-    'sample,sum,template,trim,trimLeft,trimRight,uniq,words').split(','),
+    'attempt,clone,create,curry,flatten,invert,max,memoize,method,methodOf,min,' +
+    'mixin,restParam,sample,sum,template,trim,trimLeft,trimRight,uniq,words').split(','),
   2: (
     'add,after,ary,assign,at,before,bind,bindKey,chunk,countBy,curryN,debounce,' +
     'defaults,delay,difference,drop,dropRight,dropRightWhile,dropWhile,endsWith,' +
