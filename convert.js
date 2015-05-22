@@ -72,7 +72,8 @@ var keyMap = {
 /** Used to track methods that skip `_.rearg`. */
 var skipReargMap = {
   'range': true,
-  'random': true
+  'random': true,
+  'zipObject': true
 };
 
 /** Used to iterate `aryMethodMap` keys */
