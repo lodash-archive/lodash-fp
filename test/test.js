@@ -1,6 +1,7 @@
 var _ = require('lodash-compat'),
+    convert = require('../convert.js'),
     fp = require('../index.js'),
-    convert = require('../convert.js');
+    mapping = require('../lib/mapping.js');
 
 global.QUnit = require('qunitjs');
 require('qunit-extras').runInContext(global);
@@ -13,55 +14,13 @@ var arrayProto = Array.prototype;
 /** Method and object shortcuts. */
 var slice = arrayProto.slice;
 
-/** Used to map method names to their aliases. */
-var aliasMap = {
-  'assign': ['extend'],
-  'callback': ['iteratee'],
-  'every': ['all'],
-  'filter': ['select'],
-  'find': ['detect'],
-  'first': ['head'],
-  'forEach': ['each'],
-  'forEachRight': ['eachRight'],
-  'includes': ['contains', 'include'],
-  'map': ['collect'],
-  'reduce': ['foldl', 'inject'],
-  'reduceRight': ['foldr'],
-  'rest': ['tail'],
-  'some': ['any'],
-  'uniq': ['unique'],
-  'zipObject': ['object']
-};
-
-/** Used to map ary to method names. */
-var aryMethodMap = {
-  1: (
-    'attempt,clone,create,curry,flatten,invert,max,memoize,method,methodOf,min,' +
-    'mixin,restParam,sample,sum,template,trim,trimLeft,trimRight,uniq,words').split(','),
-  2: (
-    'add,after,ary,assign,at,before,bind,bindKey,chunk,countBy,curryN,debounce,' +
-    'defaults,delay,difference,drop,dropRight,dropRightWhile,dropWhile,endsWith,' +
-    'every,filter,find,findIndex,findKey,findLast,findLastIndex,findLastKey,' +
-    'findWhere,forEach,forEachRight,forIn,forInRight,forOwn,forOwnRight,groupBy,' +
-    'has,includes,indexBy,indexOf,intersection,invoke,isEqual,isMatch,lastIndexOf,' +
-    'map,mapKeys,mapValues,matchesProperty,maxBy,merge,minBy,omit,pad,padLeft,' +
-    'padRight,parseInt,partition,pick,pluck,pull,pullAt,random,range,rearg,reject,' +
-    'remove,repeat,result,set,some,sortBy,sortByAll,sortedIndex,sortedLastIndex,' +
-    'startsWith,sumBy,take,takeRight,takeRightWhile,takeWhile,throttle,times,trunc,' +
-    'union,uniqBy,uniqueId,unzipWith,where,without,wrap,xor,zip,zipObject').split(','),
-  3:
-    'slice,sortByOrder,reduce,reduceRight,transform,zipWith'.split(','),
-  4:
-    ['fill', 'inRange']
-};
-
 /*----------------------------------------------------------------------------*/
 
 QUnit.module('method aliases');
 
 (function() {
   test('should have correct aliases', 1, function() {
-    var actual = _.transform(aliasMap, function(result, aliases, methodName) {
+    var actual = _.transform(mapping.aliasMap, function(result, aliases, methodName) {
       var func = fp[methodName];
       _.each(aliases, function(alias) {
         result.push(fp[alias] === func);
@@ -80,9 +39,9 @@ QUnit.module('method ary caps');
   test('should have a cap of 1', 1, function() {
     var funcMethods = ['curry', 'memoize', 'method', 'methodOf', 'restParam'],
         exceptions = funcMethods.concat('mixin', 'template'),
-        expected = _.map(aryMethodMap[1], _.constant(true));
+        expected = _.map(mapping.aryMethodMap[1], _.constant(true));
 
-    var actual = _.map(aryMethodMap[1], function(methodName) {
+    var actual = _.map(mapping.aryMethodMap[1], function(methodName) {
       var arg = _.includes(funcMethods, methodName) ? _.noop : '',
           result = fp[methodName](arg),
           type = typeof result;
@@ -98,9 +57,9 @@ QUnit.module('method ary caps');
   test('should have a cap of 2', 1, function() {
     var funcMethods = ['after', 'ary', 'before', 'bind', 'bindKey', 'curryN', 'debounce', 'delay', 'rearg', 'throttle', 'wrap'],
         exceptions = _.without(funcMethods.concat('matchesProperty'), 'delay'),
-        expected = _.map(aryMethodMap[2], _.constant(true));
+        expected = _.map(mapping.aryMethodMap[2], _.constant(true));
 
-    var actual = _.map(aryMethodMap[2], function(methodName) {
+    var actual = _.map(mapping.aryMethodMap[2], function(methodName) {
       var isException = _.includes(exceptions, methodName),
           arg = _.includes(funcMethods, methodName) ? [methodName == 'curryN' ? 1 : _.noop, _.noop] : [1, []],
           result = fp[methodName](arg[0])(arg[1]),
@@ -115,9 +74,9 @@ QUnit.module('method ary caps');
   });
 
   test('should have a cap of 3', 1, function() {
-    var expected = _.map(aryMethodMap[3], _.constant(true));
+    var expected = _.map(mapping.aryMethodMap[3], _.constant(true));
 
-    var actual = _.map(aryMethodMap[3], function(methodName) {
+    var actual = _.map(mapping.aryMethodMap[3], function(methodName) {
       var result = fp[methodName](0)(1)([]);
       return typeof result != 'function';
     });

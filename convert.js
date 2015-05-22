@@ -1,83 +1,5 @@
-'use strict';
-
-/** Used to map method names to their aliases. */
-var aliasMap = {
-  'assign': ['extend'],
-  'callback': ['iteratee'],
-  'every': ['all'],
-  'filter': ['select'],
-  'find': ['detect'],
-  'first': ['head'],
-  'forEach': ['each'],
-  'forEachRight': ['eachRight'],
-  'includes': ['contains', 'include'],
-  'map': ['collect'],
-  'reduce': ['foldl', 'inject'],
-  'reduceRight': ['foldr'],
-  'rest': ['tail'],
-  'some': ['any'],
-  'uniq': ['unique'],
-  'zipObject': ['object']
-};
-
-/** Used to map ary to method names. */
-var aryMethodMap = {
-  1: (
-    'attempt,clone,create,curry,flatten,invert,max,memoize,method,methodOf,min,' +
-    'mixin,restParam,sample,sum,template,trim,trimLeft,trimRight,uniq,words').split(','),
-  2: (
-    'add,after,ary,assign,at,before,bind,bindKey,chunk,countBy,curryN,debounce,' +
-    'defaults,delay,difference,drop,dropRight,dropRightWhile,dropWhile,endsWith,' +
-    'every,filter,find,findIndex,findKey,findLast,findLastIndex,findLastKey,' +
-    'findWhere,forEach,forEachRight,forIn,forInRight,forOwn,forOwnRight,groupBy,' +
-    'has,includes,indexBy,indexOf,intersection,invoke,isEqual,isMatch,lastIndexOf,' +
-    'map,mapKeys,mapValues,matchesProperty,maxBy,merge,minBy,omit,pad,padLeft,' +
-    'padRight,parseInt,partition,pick,pluck,pull,pullAt,random,range,rearg,reject,' +
-    'remove,repeat,result,set,some,sortBy,sortByAll,sortedIndex,sortedLastIndex,' +
-    'startsWith,sumBy,take,takeRight,takeRightWhile,takeWhile,throttle,times,trunc,' +
-    'union,uniqBy,uniqueId,unzipWith,where,without,wrap,xor,zip,zipObject').split(','),
-  3:
-    'slice,sortByOrder,reduce,reduceRight,transform,zipWith'.split(','),
-  4:
-    ['fill', 'inRange']
-};
-
-/** Used to map ary to rearg configs. */
-var aryReargMap = {
-  2: [1, 0],
-  3: [2, 0, 1],
-  4: [3, 2, 0, 1]
-};
-
-/** Used to track methods that accept an iteratee. */
-var iterateeMap = {
-  2: (
-    'dropRightWhile,dropWhile,every,filter,find,findIndex,findKey,findLast,' +
-    'findLastIndex,findLastKey,forEach,forEachRight,forIn,forInRight,forOwn,' +
-    'forOwnRight,groupBy,indexBy,map,mapValues,maxBy,minBy,omit,partition,pick,' +
-    'remove,some,sortBy,sortByAll,sumBy,takeRightWhile,takeWhile,times,uniqBy,').split(','),
-  3:
-    'sortByOrder,reduce,reduceRight,transform'.split(',')
-};
-
-/** Used to map keys to other keys. */
-var keyMap = {
-  'curryN': 'curry',
-  'maxBy': 'max',
-  'minBy': 'min',
-  'sumBy': 'sum',
-  'uniqBy': 'uniq'
-};
-
-/** Used to track methods that skip `_.rearg`. */
-var skipReargMap = {
-  'range': true,
-  'random': true,
-  'zipObject': true
-};
-
-/** Used to iterate `aryMethodMap` keys */
-var caps = ['1', '2', '3', '4'];
+var listing = require('./lib/listing.js'),
+    mapping = require('./lib/mapping.js');
 
 /*----------------------------------------------------------------------------*/
 
@@ -135,11 +57,11 @@ function convert(name, func) {
       return wrapper(func);
     }
     var result;
-    each(caps, function(cap) {
-      each(aryMethodMap[cap], function(otherName) {
+    each(listing.caps, function(cap) {
+      each(mapping.aryMethodMap[cap], function(otherName) {
         if (name == otherName) {
-          result = (cap > 1 && !skipReargMap[name])
-            ? rearg(func, aryReargMap[cap])
+          result = (cap > 1 && !mapping.skipReargMap[name])
+            ? rearg(func, mapping.aryReargMap[cap])
             : func;
 
           return !(result = curry(ary(result, cap), cap));
@@ -167,15 +89,15 @@ function convert(name, func) {
   });
 
   var pairs = [];
-  each(caps, function(cap) {
+  each(listing.caps, function(cap) {
     // Iterate over methods for the current ary cap.
-    each(aryMethodMap[cap], function(name) {
-      var func = _[keyMap[name] || name];
+    each(mapping.aryMethodMap[cap], function(name) {
+      var func = _[mapping.keyMap[name] || name];
       if (func) {
         // Wrap the lodash method and its aliases.
         var wrapped = wrap(name, func);
         pairs.push([name, wrapped]);
-        each(aliasMap[name], function(alias) { pairs.push([alias, wrapped]); });
+        each(mapping.aliasMap[name], function(alias) { pairs.push([alias, wrapped]); });
       }
     });
   });
