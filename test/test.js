@@ -90,7 +90,7 @@ QUnit.module('method ary caps');
 QUnit.module('methods that use `indexOf`');
 
 (function() {
-  test('should still work with a custom `_.indexOf`', 9, function() {
+  test('should still work with a fp-style `_.indexOf`', 9, function() {
     var array = ['a', 'b', 'c'],
         other = ['b', 'b', 'd'],
         object = { 'a': 1, 'b': 2, 'c': 2 },
