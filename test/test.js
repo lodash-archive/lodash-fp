@@ -94,7 +94,7 @@ QUnit.module('methods that use `indexOf`');
     var array = ['a', 'b', 'c'],
         other = ['b', 'b', 'd'],
         object = { 'a': 1, 'b': 2, 'c': 2 },
-        actual = fp.difference(other, array);
+        actual = fp.difference(array, other);
 
     deepEqual(actual, ['a', 'c'], 'fp.difference');
 
