@@ -17,13 +17,11 @@ function convert(name, func) {
     func = name;
     name = null;
   }
-  var type = typeof func,
-      isLib = type == 'function' && typeof func.VERSION == 'string',
-      isObj = func != null && (type == 'function' || type == 'object');
-
-  if (name == null && !isObj) {
+  if (func == null) {
     throw new TypeError;
   }
+  var isLib = typeof func.VERSION == 'string';
+
   var _ = isLib ? func : {
     'ary': require('lodash-compat/function/ary'),
     'callback': require('lodash-compat/utility/callback'),
