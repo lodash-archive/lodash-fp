@@ -169,6 +169,16 @@ QUnit.module('fp.curryN');
 
 /*----------------------------------------------------------------------------*/
 
+QUnit.module('fp.difference');
+
+(function() {
+  test('should return the elements of the first array not included in the second array', 1, function() {
+    deepEqual(fp.difference([1, 2])([2, 3]), [1]);
+  });
+}());
+
+/*----------------------------------------------------------------------------*/
+
 QUnit.module('fp.range');
 
 (function() {
@@ -263,6 +273,16 @@ QUnit.module('fp.uniqBy');
     })(objects);
 
     deepEqual(args, [objects[0], 0, objects]);
+  });
+}());
+
+/*----------------------------------------------------------------------------*/
+
+QUnit.module('fp.zipObject');
+
+(function() {
+  test('should accept `keys` and `values` params', 1, function() {
+    deepEqual(fp.zipObject(['a', 'b'])([1, 2]), { 'a': 1, 'b': 2 });
   });
 }());
 
