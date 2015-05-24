@@ -17,23 +17,27 @@ In Node.js/io.js:
 var _ = require('lodash-fp');
 
 var items = [
-  { 'value': _.constant('a') },
   { 'value': _.constant(['a', 'b']) },
   { 'value': _.constant(['b', 'c']) }
 ];
 
-var getValue = _.map(_.result('value')),
-    getValues = _.flow(getValue, _.flatten, _.uniq);
+var getValues = _.flow(
+  _.map(_.result('value')),
+  _.flatten,
+  _.uniq
+);
 
 getValues(items);
 // => ['a', 'b', 'c']
 
-// lazy evaluation is supported too
-_(_.range(0, 10))
-  .map(function(value) { console.log('map'); return value * value; })
-  .filter(function(value) { console.log('filter'); return value % 2 == 0; })
-  .take(2)
-  .value();
+// shortcut fusion is supported too
+var combined = _.flow(
+  _.map(function(value) { console.log('map'); return value * value; }),
+  _.filter(function(value) { console.log('filter'); return value % 2 == 0; }),
+  _.take(2)
+);
+
+combined(_.range(0, 10));
 
 // logs map, filter, map, filter, map, filter
 // => [0, 4]
