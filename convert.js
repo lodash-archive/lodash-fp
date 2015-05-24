@@ -58,11 +58,11 @@ function convert(name, func) {
     each(listing.caps, function(cap) {
       each(mapping.aryMethodMap[cap], function(otherName) {
         if (name == otherName) {
-          result = (cap > 1 && !mapping.skipReargMap[name])
-            ? rearg(func, mapping.aryReargMap[cap])
-            : func;
-
-          return !(result = curry(ary(result, cap), cap));
+          result = ary(func, cap);
+          if (cap > 1 && !mapping.skipReargMap[name]) {
+            result = rearg(result, mapping.aryReargMap[cap]);
+          }
+          return !(result = curry(result, cap));
         }
       });
       return !result;
