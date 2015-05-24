@@ -24,6 +24,8 @@
     "qunitjs": "~1.18.0"
   },
   "files": [
+    "lib/listing.js",
+    "lib/mapping.js",
     "convert.js",
     "index.js"
   ]
