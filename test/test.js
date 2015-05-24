@@ -179,13 +179,61 @@ QUnit.module('fp.difference');
 
 /*----------------------------------------------------------------------------*/
 
-QUnit.module('fp.range');
+QUnit.module('fp.flow and fp.flowRight');
 
-(function() {
-  test('should have an argument order of `start` then `end`', 1, function() {
-    deepEqual(fp.range(1)(4), [1, 2, 3]);
+_.each(['flow', 'flowRight'], function(methodName, index) {
+  var func = fp[methodName],
+      isFlow = methodName == 'flow';
+
+  test('`fp.' + methodName + '` should support shortcut fusion', 6, function() {
+    var filterCount,
+        mapCount;
+
+    var filter = fp.filter(function(value) { filterCount++; return value % 2 == 0; }),
+        map = fp.map(function(value) { mapCount++; return value * value; }),
+        take = fp.take(2);
+
+    _.times(2, function(index) {
+      var combined = isFlow
+        ? func(map, filter, fp.compact, take)
+        : func(take, fp.compact, filter, map);
+
+      filterCount = mapCount = 0;
+
+      deepEqual(combined(fp.range(0, 100)), [4, 16]);
+      strictEqual(filterCount, 5, 'filterCount');
+      strictEqual(mapCount, 5, 'mapCount');
+    });
   });
-}());
+});
+
+/*----------------------------------------------------------------------------*/
+
+QUnit.module('fp.maxBy and fp.minBy');
+
+_.each(['maxBy', 'minBy'], function(methodName, index) {
+  var array = [1, 2, 3],
+      func = fp[methodName],
+      isMax = !index;
+
+  test('`fp.' + methodName + '` should work with an `iteratee` argument', 1, function() {
+    var actual = func(function(num) {
+      return -num;
+    })(array);
+
+    strictEqual(actual, isMax ? 1 : 3);
+  });
+
+  test('`fp.' + methodName + '` should provide the correct `iteratee` arguments', 1, function() {
+    var args;
+
+    func(function() {
+      args || (args = slice.call(arguments));
+    })(array);
+
+    deepEqual(args, [1]);
+  });
+});
 
 /*----------------------------------------------------------------------------*/
 
@@ -207,31 +255,13 @@ QUnit.module('fp.random');
 
 /*----------------------------------------------------------------------------*/
 
-QUnit.module('fp.maxBy and fp.minBy');
+QUnit.module('fp.range');
 
-_.each(['maxBy', 'minBy'], function(methodName, index) {
-  var array = [1, 2, 3],
-      func = fp[methodName],
-      isMax = !index;
-
-  test('`_.' + methodName + '` should work with an `iteratee` argument', 1, function() {
-    var actual = func(function(num) {
-      return -num;
-    })(array);
-
-    strictEqual(actual, isMax ? 1 : 3);
+(function() {
+  test('should have an argument order of `start` then `end`', 1, function() {
+    deepEqual(fp.range(1)(4), [1, 2, 3]);
   });
-
-  test('`_.' + methodName + '` should provide the correct `iteratee` arguments', 1, function() {
-    var args;
-
-    func(function() {
-      args || (args = slice.call(arguments));
-    })(array);
-
-    deepEqual(args, [1]);
-  });
-});
+}());
 
 /*----------------------------------------------------------------------------*/
 
