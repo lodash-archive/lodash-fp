@@ -35,11 +35,29 @@ function convert(name, func) {
       each = _.each,
       rearg = _.rearg;
 
+  var baseAry = function(func, n) {
+    return function() {
+      var args = arguments,
+          length = Math.min(args.length, n);
+
+      switch (length) {
+        case 0: return func();
+        case 1: return func(args[0]);
+        case 2: return func(args[0], args[1]);
+      }
+      args = Array(length);
+      while (length--) {
+        args[length] = arguments[length];
+      }
+      return func.apply(undefined, args);
+    };
+  };
+
   var wrappers = {
     'callback': function(callback) {
       return function(func, thisArg, argCount) {
         argCount = argCount > 2 ? (argCount - 2) : 1;
-        return ary(callback(func, thisArg), argCount);
+        return baseAry(callback(func, thisArg), argCount);
       };
     },
     'runInContext': function(runInContext) {
