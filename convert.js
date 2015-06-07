@@ -41,9 +41,9 @@ function convert(name, func) {
           length = Math.min(args.length, n);
 
       switch (length) {
-        case 0: return func();
         case 1: return func(args[0]);
         case 2: return func(args[0], args[1]);
+        case 0: return func();
       }
       args = Array(length);
       while (length--) {
@@ -57,7 +57,8 @@ function convert(name, func) {
     'callback': function(callback) {
       return function(func, thisArg, argCount) {
         argCount = argCount > 2 ? (argCount - 2) : 1;
-        return baseAry(callback(func, thisArg), argCount);
+        func = callback(func, thisArg);
+        return func.length <= argCount ? func : baseAry(func, argCount);
       };
     },
     'runInContext': function(runInContext) {
