@@ -269,12 +269,12 @@ QUnit.module('fp.runInContext');
 
 (function() {
   test('should return a converted lodash instance', 1, function() {
-    ok(typeof fp.runInContext().curryN == 'function');
+    ok(typeof fp.runInContext({}).curryN == 'function');
   });
 
   test('should convert by name', 1, function() {
     var runInContext = convert('runInContext', _.runInContext);
-    ok(typeof runInContext().curryN == 'function');
+    ok(typeof runInContext({}).curryN == 'function');
   });
 }());
 

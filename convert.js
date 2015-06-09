@@ -61,10 +61,30 @@ function convert(name, func) {
         return func.length <= argCount ? func : baseAry(func, argCount);
       };
     },
+    'mixin': function(mixin) {
+      return curry(function(source) {
+        var methodNames = _.functions(source);
+
+        var methods = _.map(methodNames, function(methodName) {
+          return _.prototype[methodName];
+        });
+
+        mixin.call(_, source);
+        each(methodNames, function(methodName, index) {
+          var method = methods[index];
+          if (_.isFunction(method)) {
+            _.prototype[methodName] = method;
+          } else {
+            delete _.prototype[methodName];
+          }
+        });
+        return _;
+      });
+    },
     'runInContext': function(runInContext) {
-      return function(context) {
+      return curry(function(context) {
         return convert(runInContext(context));
-      };
+      });
     }
   };
 
@@ -122,6 +142,7 @@ function convert(name, func) {
   // Assign to `_` leaving `_.prototype` unchanged to allow chaining.
   _.callback = wrappers.callback(_.callback);
   _.iteratee = _.callback;
+  _.mixin = wrappers.mixin(_.mixin);
   _.runInContext = wrappers.runInContext(_.runInContext);
 
   each(pairs, function(pair) { _[pair[0]] = pair[1]; });
