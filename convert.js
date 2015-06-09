@@ -58,7 +58,8 @@ function convert(name, func) {
       return function(func, thisArg, argCount) {
         argCount = argCount > 2 ? (argCount - 2) : 1;
         func = callback(func, thisArg);
-        return func.length <= argCount ? func : baseAry(func, argCount);
+        var length = func.length;
+        return (length && length <= argCount) ? func : baseAry(func, argCount);
       };
     },
     'mixin': function(mixin) {
