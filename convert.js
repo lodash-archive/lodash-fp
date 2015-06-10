@@ -68,7 +68,7 @@ function convert(name, func) {
     },
     'mixin': function(mixin) {
       return function(source) {
-        var object = isLib ? _ : this;
+        var object = this;
         if (!isFunction(object)) {
           return mixin(object, source);
         }
