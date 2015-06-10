@@ -27,16 +27,16 @@ function convert(name, func) {
     'callback': require('lodash-compat/utility/callback'),
     'curry': require('lodash-compat/function/curry'),
     'each': require('lodash-compat/internal/arrayEach'),
-    'functions': require('lodash-compat/object/functions'),
     'isFunction': require('lodash-compat/lang/isFunction'),
+    'keys': require('lodash-compat/object/keys'),
     'rearg': require('lodash-compat/function/rearg')
   };
 
   var ary = _.ary,
       curry = _.curry,
       each = _.each,
-      functions = _.functions,
       isFunction = _.isFunction,
+      keys = _.keys,
       rearg = _.rearg;
 
   var baseAry = function(func, n) {
@@ -68,28 +68,32 @@ function convert(name, func) {
     },
     'mixin': function(mixin) {
       return function(source) {
-        var object = this;
-        if (!isFunction(object)) {
-          return mixin(object, source);
+        var func = this;
+        if (!isFunction(func)) {
+          return mixin(func, source);
         }
         var methods = [],
-            methodNames = functions(source);
+            methodNames = [];
 
-        each(methodNames, function(methodName) {
-          methods.push(object.prototype[methodName]);
+        each(keys(source), function(key) {
+          var value = source[key];
+          if (isFunction(value)) {
+            methodNames.push(key);
+            methods.push(func.prototype[key]);
+          }
         });
 
-        mixin(object, source);
+        mixin(func, source);
 
         each(methodNames, function(methodName, index) {
           var method = methods[index];
           if (isFunction(method)) {
-            object.prototype[methodName] = method;
+            func.prototype[methodName] = method;
           } else {
-            delete object.prototype[methodName];
+            delete func.prototype[methodName];
           }
         });
-        return object;
+        return func;
       };
     },
     'runInContext': function(runInContext) {

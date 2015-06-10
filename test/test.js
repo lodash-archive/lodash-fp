@@ -240,25 +240,53 @@ _.each(['maxBy', 'minBy'], function(methodName, index) {
 QUnit.module('fp.mixin');
 
 (function() {
-  var source = { 'a': function() {} };
-  
+  var source = { 'a': _.noop };
+
   test('should mixin static methods but not prototype methods', 2, function() {
     fp.mixin(source);
-    
+
     strictEqual(typeof fp.a, 'function');
     ok(!('a' in fp.prototype));
+
+    delete fp.a;
+    delete fp.prototype.a;
   });
-  
+
+  test('should not assign inherited `source` methods', 2, function() {
+    function Foo() {}
+    Foo.prototype.a = _.noop;
+    fp.mixin(new Foo);
+
+    ok(!('a' in fp));
+    ok(!('a' in fp.prototype));
+
+    delete fp.a;
+    delete fp.prototype.a;
+  });
+
+  test('should not remove existing prototype methods', 2, function() {
+    var each1 = fp.each,
+        each2 = fp.prototype.each;
+
+    fp.mixin({ 'each': source.a });
+
+    strictEqual(fp.each, source.a);
+    strictEqual(fp.prototype.each, each2);
+
+    fp.each = each1;
+    fp.prototype.each = each2;
+  });
+
   test('should convert by name', 3, function() {
     var object = { 'mixin': convert('mixin', _.mixin) };
-    
+
     function Foo() {}
     Foo.mixin = object.mixin;
     Foo.mixin(source);
-    
+
     strictEqual(typeof Foo.a, 'function');
     ok(!('a' in Foo.prototype));
-    
+
     object.mixin(source);
     strictEqual(typeof object.a, 'function');
   });
