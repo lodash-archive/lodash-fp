@@ -27,12 +27,16 @@ function convert(name, func) {
     'callback': require('lodash-compat/utility/callback'),
     'curry': require('lodash-compat/function/curry'),
     'each': require('lodash-compat/internal/arrayEach'),
+    'functions': require('lodash-compat/object/functions'),
+    'isFunction': require('lodash-compat/lang/isFunction'),
     'rearg': require('lodash-compat/function/rearg')
   };
 
   var ary = _.ary,
       curry = _.curry,
       each = _.each,
+      functions = _.functions,
+      isFunction = _.isFunction,
       rearg = _.rearg;
 
   var baseAry = function(func, n) {
@@ -63,29 +67,35 @@ function convert(name, func) {
       };
     },
     'mixin': function(mixin) {
-      return curry(function(source) {
-        var methodNames = _.functions(source);
+      return function(source) {
+        var object = isLib ? _ : this;
+        if (!isFunction(object)) {
+          return mixin(object, source);
+        }
+        var methods = [],
+            methodNames = functions(source);
 
-        var methods = _.map(methodNames, function(methodName) {
-          return _.prototype[methodName];
+        each(methodNames, function(methodName) {
+          methods.push(object.prototype[methodName]);
         });
 
-        mixin.call(_, source);
+        mixin(object, source);
+
         each(methodNames, function(methodName, index) {
           var method = methods[index];
-          if (_.isFunction(method)) {
-            _.prototype[methodName] = method;
+          if (isFunction(method)) {
+            object.prototype[methodName] = method;
           } else {
-            delete _.prototype[methodName];
+            delete object.prototype[methodName];
           }
         });
-        return _;
-      });
+        return object;
+      };
     },
     'runInContext': function(runInContext) {
-      return curry(function(context) {
+      return function(context) {
         return convert(runInContext(context));
-      });
+      };
     }
   };
 

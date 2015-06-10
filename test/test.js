@@ -237,6 +237,35 @@ _.each(['maxBy', 'minBy'], function(methodName, index) {
 
 /*----------------------------------------------------------------------------*/
 
+QUnit.module('fp.mixin');
+
+(function() {
+  var source = { 'a': function() {} };
+  
+  test('should mixin static methods but not prototype methods', 2, function() {
+    fp.mixin(source);
+    
+    strictEqual(typeof fp.a, 'function');
+    ok(!('a' in fp.prototype));
+  });
+  
+  test('should convert by name', 3, function() {
+    var object = { 'mixin': convert('mixin', _.mixin) };
+    
+    function Foo() {}
+    Foo.mixin = object.mixin;
+    Foo.mixin(source);
+    
+    strictEqual(typeof Foo.a, 'function');
+    ok(!('a' in Foo.prototype));
+    
+    object.mixin(source);
+    strictEqual(typeof object.a, 'function');
+  });
+}());
+
+/*----------------------------------------------------------------------------*/
+
 QUnit.module('fp.random');
 
 (function() {
