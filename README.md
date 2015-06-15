@@ -1,6 +1,6 @@
 # lodash-fp v0.9.3
 
-[lodash](https://lodash.com/) with auto-curried iteratee-first methods.
+[lodash](https://lodash.com/) with auto-curried iteratee-first data-last methods.
 
 ## Installation
 
