@@ -8,6 +8,9 @@ require('qunit-extras').runInContext(global);
 
 /*----------------------------------------------------------------------------*/
 
+/** Used as the size to cover large array optimizations. */
+var LARGE_ARRAY_SIZE = 200;
+
 /** Used for native method references. */
 var arrayProto = Array.prototype;
 
@@ -200,7 +203,7 @@ _.each(['flow', 'flowRight'], function(methodName, index) {
 
       filterCount = mapCount = 0;
 
-      deepEqual(combined(fp.range(0, 100)), [4, 16]);
+      deepEqual(combined(fp.range(0, LARGE_ARRAY_SIZE)), [4, 16]);
       strictEqual(filterCount, 5, 'filterCount');
       strictEqual(mapCount, 5, 'mapCount');
     });
