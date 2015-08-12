@@ -1,0 +1,13 @@
+{
+  "name": "lodash-fp",
+  "license": "MIT",
+  "main": "dist/lodash-fp.js",
+  "ignore": [
+    ".*",
+    "*.log",
+    "*.md",
+    "package.json",
+    "lib",
+    "test"
+  ]
+}

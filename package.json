@@ -15,13 +15,19 @@
     "Mathias Bynens <mathias@qiwi.be> (https://mathiasbynens.be/)"
   ],
   "repository": "lodash/lodash-fp",
-  "scripts": { "test": "echo \"See the repository CONTRIBUTING.md for testing instructions.\"" },
+  "scripts": {
+    "build": "browserify . -p bundle-collapser/plugin -s _ -o dist/lodash-fp.js && uglifyjs $_ -m -c \"comparisons=false,keep_fargs=true,pure_getters=true,unsafe=true,unsafe_comps=true,warnings=false\" -b \"ascii_only=true,beautify=false,max_line_len=500\" -o dist/lodash-fp.min.js",
+    "test": "echo \"See the repository CONTRIBUTING.md for testing instructions.\""
+  },
   "dependencies": {
     "lodash-compat": "^3.0.0"
   },
   "devDependencies": {
+    "browserify": "^11.0.1",
+    "bundle-collapser": "^1.2.1",
     "qunit-extras": "~1.4.0",
-    "qunitjs": "~1.18.0"
+    "qunitjs": "~1.18.0",
+    "uglify-js": "2.4.24"
   },
   "files": [
     "lib/listing.js",
