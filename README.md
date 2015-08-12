@@ -38,7 +38,6 @@ var combined = _.flow(
 );
 
 combined(_.range(0, 10));
-
 // logs map, filter, map, filter, map, filter
 // => [0, 4]
 ```
