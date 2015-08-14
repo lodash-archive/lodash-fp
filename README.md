@@ -4,6 +4,18 @@
 
 ## Installation
 
+Using bower:
+
+```bash
+$ bower i lodash-fp#0.10.1
+```
+
+In browsers:
+
+```html
+<script src="dist/lodash-fp.js"></script>
+```
+
 Using npm:
 
 ```bash
