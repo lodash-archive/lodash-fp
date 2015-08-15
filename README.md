@@ -49,7 +49,7 @@ var combined = _.flow(
   _.take(2)
 );
 
-combined(_.range(0, 10));
+combined(_.range(0, 200));
 // logs map, filter, map, filter, map, filter
 // => [0, 4]
 ```
