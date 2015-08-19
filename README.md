@@ -1,4 +1,4 @@
-# lodash-fp v0.10.1
+# lodash-fp v0.10.2
 
 [lodash](https://lodash.com/) with auto-curried iteratee-first data-last methods.
 
@@ -7,7 +7,7 @@
 Using bower:
 
 ```bash
-$ bower i lodash-fp#0.10.1
+$ bower i lodash-fp#0.10.2
 ```
 
 In browsers:
@@ -54,7 +54,7 @@ combined(_.range(0, 200));
 // => [0, 4]
 ```
 
-See the [package source](https://github.com/lodash/lodash-fp/tree/0.10.1) for more details.
+See the [package source](https://github.com/lodash/lodash-fp/tree/0.10.2) for more details.
 
 **Note:**<br>
 Don’t assign values to the [special variable](http://nodejs.org/api/repl.html#repl_repl_features) `_` when in the REPL.<br>
