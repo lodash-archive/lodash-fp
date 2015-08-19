@@ -6,6 +6,8 @@
     ".*",
     "*.log",
     "*.md",
+    "convert.js",
+    "index.js",
     "package.json",
     "lib",
     "test"
