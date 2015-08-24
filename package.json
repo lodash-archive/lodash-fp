@@ -20,7 +20,7 @@
     "test": "echo \"See the repository CONTRIBUTING.md for testing instructions.\""
   },
   "dependencies": {
-    "lodash-compat": "^3.0.0"
+    "lodash": "^4.0.0"
   },
   "devDependencies": {
     "qunit-extras": "~1.4.0",

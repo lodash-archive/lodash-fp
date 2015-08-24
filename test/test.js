@@ -1,4 +1,4 @@
-var _ = require('lodash-compat'),
+var _ = require('lodash'),
     convert = require('../convert.js'),
     fp = require('../index.js'),
     mapping = require('../lib/mapping.js');
@@ -46,42 +46,64 @@ QUnit.module('method ary caps');
 
     var actual = _.map(mapping.aryMethodMap[1], function(methodName) {
       var arg = _.includes(funcMethods, methodName) ? _.noop : '',
-          result = fp[methodName](arg),
-          type = typeof result;
+          result = _.attempt(function() { return fp[methodName](arg); });
 
-      return _.includes(exceptions, methodName)
-        ? type == 'function'
-        : type != 'function';
+      if (_.includes(exceptions, methodName)
+            ? typeof result == 'function'
+            : typeof result != 'function'
+          ) {
+        return true;
+      }
+      console.log(methodName, result);
+      return false;
     });
 
     deepEqual(actual, expected);
   });
 
   test('should have a cap of 2', 1, function() {
-    var funcMethods = ['after', 'ary', 'before', 'bind', 'bindKey', 'curryN', 'debounce', 'delay', 'rearg', 'throttle', 'wrap'],
-        exceptions = _.without(funcMethods.concat('matchesProperty'), 'delay'),
+    var funcMethods = [
+      'after', 'ary', 'before', 'bind', 'bindKey', 'cloneDeepWith', 'cloneWith',
+      'curryN', 'debounce', 'delay', 'rearg', 'throttle', 'wrap'
+    ];
+
+    var exceptions = _.difference(funcMethods.concat('matchesProperty'), ['cloneDeepWith', 'cloneWith', 'delay']),
         expected = _.map(mapping.aryMethodMap[2], _.constant(true));
 
     var actual = _.map(mapping.aryMethodMap[2], function(methodName) {
-      var isException = _.includes(exceptions, methodName),
-          arg = _.includes(funcMethods, methodName) ? [methodName == 'curryN' ? 1 : _.noop, _.noop] : [1, []],
-          result = fp[methodName](arg[0])(arg[1]),
-          type = typeof result;
+      var args = _.includes(funcMethods, methodName) ? [methodName == 'curryN' ? 1 : _.noop, _.noop] : [1, []],
+          result = _.attempt(function() { return fp[methodName](args[0])(args[1]); });
 
-      return _.includes(exceptions, methodName)
-        ? type == 'function'
-        : type != 'function';
+      if (_.includes(exceptions, methodName)
+            ? typeof result == 'function'
+            : typeof result != 'function'
+          ) {
+        return true;
+      }
+      console.log(methodName, result);
+      return false;
     });
 
     deepEqual(actual, expected);
   });
 
   test('should have a cap of 3', 1, function() {
+    var funcMethods = [
+      'assignWith', 'extendWith', 'isEqualWith', 'isMatchWith', 'omitBy',
+      'pickBy', 'reduce', 'reduceRight', 'transform', 'zipWith'
+    ];
+
     var expected = _.map(mapping.aryMethodMap[3], _.constant(true));
 
     var actual = _.map(mapping.aryMethodMap[3], function(methodName) {
-      var result = fp[methodName](0)(1)([]);
-      return typeof result != 'function';
+      var args = _.includes(funcMethods, methodName) ? [_.noop, 0, 1] : [0, 1, []],
+          result = _.attempt(function() { return fp[methodName](args[0])(args[1])(args[2]); });
+
+      if (typeof result != 'function') {
+        return true;
+      }
+      console.log(methodName, result);
+      return false;
     });
 
     deepEqual(actual, expected);
@@ -93,7 +115,7 @@ QUnit.module('method ary caps');
 QUnit.module('methods that use `indexOf`');
 
 (function() {
-  test('should work with `fp.indexOf`', 9, function() {
+  test('should work with `fp.indexOf`', 10, function() {
     var array = ['a', 'b', 'c'],
         other = ['b', 'b', 'd'],
         object = { 'a': 1, 'b': 2, 'c': 2 },
@@ -116,6 +138,9 @@ QUnit.module('methods that use `indexOf`');
     actual = fp.uniq(other);
     deepEqual(actual, ['b', 'd'], 'fp.uniq');
 
+    actual = fp.uniqBy(_.identity, other);
+    deepEqual(actual, ['b', 'd'], 'fp.uniqBy');
+
     actual = fp.without('b', array);
     deepEqual(actual, ['a', 'c'], 'fp.without');
 
@@ -129,23 +154,49 @@ QUnit.module('methods that use `indexOf`');
 
 /*----------------------------------------------------------------------------*/
 
-QUnit.module('fp.callback');
+QUnit.module('cherry-picked methods');
 
 (function() {
-  test('should return a callback with capped params', 1, function() {
-    var func = fp.callback(function(a, b, c) { return [a, b, c]; }, undefined, 3);
-    deepEqual(func(1, 2, 3), [1, undefined, undefined]);
+  test('should provide the correct `iteratee` arguments', 1, function() {
+    var args,
+        array = [1, 2, 3],
+        map = convert('map', _.map);
+
+    map(function() {
+      args || (args = slice.call(arguments));
+    })(array);
+
+    deepEqual(args, [1]);
   });
 
-  test('should convert by name', 1, function() {
-    var callback = convert('callback', _.callback),
-        func = callback(function(a, b, c) { return [a, b, c]; }, undefined, 3);
+  test('should not support shortcut fusion', 3, function() {
+    var array = fp.range(0, LARGE_ARRAY_SIZE),
+        filterCount = 0,
+        mapCount = 0;
 
-    deepEqual(func(1, 2, 3), [1, undefined, undefined]);
-  });
+    var iteratee = function(value) {
+      mapCount++;
+      return value * value;
+    };
 
-  test('should be aliased', 1, function() {
-    strictEqual(fp.iteratee, fp.callback);
+    var predicate = function(value) {
+      filterCount++;
+      return value % 2 == 0;
+    };
+
+    var map1 = convert('map', _.map),
+        filter1 = convert('filter', _.filter),
+        take1 = convert('take', _.take);
+
+    var filter2 = filter1(predicate),
+        map2 = map1(iteratee),
+        take2 = take1(2);
+
+    var combined = fp.flow(map2, filter2, fp.compact, take2);
+
+    deepEqual(combined(array), [4, 16]);
+    strictEqual(filterCount, 200, 'filterCount');
+    strictEqual(mapCount, 200, 'mapCount');
   });
 }());
 
@@ -190,10 +241,21 @@ _.each(['flow', 'flowRight'], function(methodName, index) {
 
   test('`fp.' + methodName + '` should support shortcut fusion', 6, function() {
     var filterCount,
-        mapCount;
+        mapCount,
+        array = fp.range(0, LARGE_ARRAY_SIZE);
 
-    var filter = fp.filter(function(value) { filterCount++; return value % 2 == 0; }),
-        map = fp.map(function(value) { mapCount++; return value * value; }),
+    var iteratee = function(value) {
+      mapCount++;
+      return value * value;
+    };
+
+    var predicate = function(value) {
+      filterCount++;
+      return value % 2 == 0;
+    };
+
+    var filter = fp.filter(predicate),
+        map = fp.map(iteratee),
         take = fp.take(2);
 
     _.times(2, function(index) {
@@ -203,12 +265,30 @@ _.each(['flow', 'flowRight'], function(methodName, index) {
 
       filterCount = mapCount = 0;
 
-      deepEqual(combined(fp.range(0, LARGE_ARRAY_SIZE)), [4, 16]);
+      deepEqual(combined(array), [4, 16]);
       strictEqual(filterCount, 5, 'filterCount');
       strictEqual(mapCount, 5, 'mapCount');
     });
   });
 });
+
+/*----------------------------------------------------------------------------*/
+
+QUnit.module('fp.iteratee');
+
+(function() {
+  test('should return a iteratee with capped params', 1, function() {
+    var func = fp.iteratee(function(a, b, c) { return [a, b, c]; }, undefined, 3);
+    deepEqual(func(1, 2, 3), [1, undefined, undefined]);
+  });
+
+  test('should convert by name', 1, function() {
+    var iteratee = convert('iteratee', _.iteratee),
+        func = iteratee(function(a, b, c) { return [a, b, c]; }, undefined, 3);
+
+    deepEqual(func(1, 2, 3), [1, undefined, undefined]);
+  });
+}());
 
 /*----------------------------------------------------------------------------*/
 
@@ -362,7 +442,7 @@ QUnit.module('fp.uniqBy');
       args || (args = slice.call(arguments));
     })(objects);
 
-    deepEqual(args, [objects[0], 0, objects]);
+    deepEqual(args, [objects[0]]);
   });
 }());
 

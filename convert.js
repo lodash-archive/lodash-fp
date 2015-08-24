@@ -20,16 +20,16 @@ function convert(name, func) {
   if (func == null) {
     throw new TypeError;
   }
-  var isLib = typeof func.VERSION == 'string';
+  var isLib = name == null && typeof func.VERSION == 'string';
 
   var _ = isLib ? func : {
-    'ary': require('lodash-compat/function/ary'),
-    'callback': require('lodash-compat/utility/callback'),
-    'curry': require('lodash-compat/function/curry'),
-    'each': require('lodash-compat/internal/arrayEach'),
-    'isFunction': require('lodash-compat/lang/isFunction'),
-    'keys': require('lodash-compat/object/keys'),
-    'rearg': require('lodash-compat/function/rearg')
+    'ary': require('lodash/function/ary'),
+    'curry': require('lodash/function/curry'),
+    'each': require('lodash/internal/arrayEach'),
+    'isFunction': require('lodash/lang/isFunction'),
+    'iteratee': require('lodash/utility/iteratee'),
+    'keys': require('lodash/internal/baseKeys'),
+    'rearg': require('lodash/function/rearg')
   };
 
   var ary = _.ary,
@@ -47,7 +47,6 @@ function convert(name, func) {
       switch (length) {
         case 1: return func(args[0]);
         case 2: return func(args[0], args[1]);
-        case 0: return func();
       }
       args = Array(length);
       while (length--) {
@@ -57,13 +56,26 @@ function convert(name, func) {
     };
   };
 
+  var iterateeAry = function(func, n) {
+    return function() {
+      var length = arguments.length,
+          args = Array(length);
+
+      while (length--) {
+        args[length] = arguments[length];
+      }
+      args[0] = baseAry(args[0], n);
+      return func.apply(undefined, args);
+    };
+  };
+
   var wrappers = {
-    'callback': function(callback) {
-      return function(func, thisArg, argCount) {
-        argCount = argCount > 2 ? (argCount - 2) : 1;
-        func = callback(func, thisArg);
+    'iteratee': function(iteratee) {
+      return function(func, arity) {
+        arity = arity > 2 ? (arity - 2) : 1;
+        func = iteratee(func);
         var length = func.length;
-        return (length && length <= argCount) ? func : baseAry(func, argCount);
+        return length <= arity ? func : baseAry(func, arity);
       };
     },
     'mixin': function(mixin) {
@@ -116,6 +128,10 @@ function convert(name, func) {
           if (cap > 1 && !mapping.skipReargMap[name]) {
             result = rearg(result, mapping.aryReargMap[cap]);
           }
+          var n = !isLib && mapping.aryIterateeMap[name];
+          if (n) {
+            result = iterateeAry(result, n);
+          }
           return !(result = curry(result, cap));
         }
       });
@@ -129,15 +145,16 @@ function convert(name, func) {
   }
   // Disable custom `_.indexOf` use by these methods.
   _.mixin({
-    'difference': require('lodash-compat/array/difference'),
-    'includes': require('lodash-compat/collection/includes'),
-    'intersection': require('lodash-compat/array/intersection'),
-    'omit': require('lodash-compat/object/omit'),
-    'pull': require('lodash-compat/array/pull'),
-    'union': require('lodash-compat/array/union'),
-    'uniq': require('lodash-compat/array/uniq'),
-    'without': require('lodash-compat/array/without'),
-    'xor': require('lodash-compat/array/xor')
+    'difference': require('lodash/array/difference'),
+    'includes': require('lodash/collection/includes'),
+    'intersection': require('lodash/array/intersection'),
+    'omit': require('lodash/object/omit'),
+    'pull': require('lodash/array/pull'),
+    'union': require('lodash/array/union'),
+    'uniq': require('lodash/array/uniq'),
+    'uniqBy': require('lodash/array/uniqBy'),
+    'without': require('lodash/array/without'),
+    'xor': require('lodash/array/xor')
   });
 
   var pairs = [];
@@ -155,8 +172,7 @@ function convert(name, func) {
   });
 
   // Assign to `_` leaving `_.prototype` unchanged to allow chaining.
-  _.callback = wrappers.callback(_.callback);
-  _.iteratee = _.callback;
+  _.iteratee = wrappers.iteratee(_.iteratee);
   _.mixin = wrappers.mixin(_.mixin);
   _.runInContext = wrappers.runInContext(_.runInContext);
 
