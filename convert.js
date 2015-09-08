@@ -132,7 +132,10 @@ function convert(name, func) {
           if (n) {
             result = iterateeAry(result, n);
           }
-          return !(result = curry(result, cap));
+          if (cap > 1) {
+            result = curry(result, cap);
+          }
+          return false;
         }
       });
       return !result;
