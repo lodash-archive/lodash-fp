@@ -7,12 +7,12 @@ var listing = require('./lib/listing.js'),
  * Converts `func` of `name` to an auto-curried iteratee-first version. If `name`
  * is an object the methods on it will be converted and the object returned.
  *
+ * @param {Function} lodash The lodash function.
  * @param {string} name The name of the function to wrap.
  * @param {Function} func The function to wrap.
- * @returns {Function|Object} Returns the new converted function or object of
- *  converted functions.
+ * @returns {Function|Object} Returns the new converted object.
  */
-function convert(name, func) {
+function convert(lodash, name, func) {
   if (!func) {
     func = name;
     name = null;
@@ -20,24 +20,12 @@ function convert(name, func) {
   if (func == null) {
     throw new TypeError;
   }
-  var isLib = name == null && typeof func.VERSION == 'string';
-
-  var _ = isLib ? func : {
-    'ary': require('lodash/function/ary'),
-    'curry': require('lodash/function/curry'),
-    'each': require('lodash/internal/arrayEach'),
-    'isFunction': require('lodash/lang/isFunction'),
-    'iteratee': require('lodash/utility/iteratee'),
-    'keys': require('lodash/internal/baseKeys'),
-    'rearg': require('lodash/function/rearg')
-  };
-
-  var ary = _.ary,
-      curry = _.curry,
-      each = _.each,
-      isFunction = _.isFunction,
-      keys = _.keys,
-      rearg = _.rearg;
+  var ary = lodash.ary,
+      curry = lodash.curry,
+      each = lodash.forEach,
+      isFunction = lodash.isFunction,
+      keys = lodash.keys,
+      rearg = lodash.rearg;
 
   var baseAry = function(func, n) {
     return function() {
@@ -110,7 +98,7 @@ function convert(name, func) {
     },
     'runInContext': function(runInContext) {
       return function(context) {
-        return convert(runInContext(context));
+        return convert(lodash, runInContext(context));
       };
     }
   };
@@ -143,26 +131,28 @@ function convert(name, func) {
     return result || func;
   };
 
+  var isLib = name == null && typeof func.VERSION == 'string';
   if (!isLib) {
     return wrap(name, func);
   }
   // Disable custom `_.indexOf` use by these methods.
+  var _ = func;
   _.mixin({
-    'difference': require('lodash/array/difference'),
-    'includes': require('lodash/collection/includes'),
-    'intersection': require('lodash/array/intersection'),
-    'omit': require('lodash/object/omit'),
-    'pull': require('lodash/array/pull'),
-    'union': require('lodash/array/union'),
-    'uniq': require('lodash/array/uniq'),
-    'uniqBy': require('lodash/array/uniqBy'),
-    'without': require('lodash/array/without'),
-    'xor': require('lodash/array/xor')
+    'difference': lodash.difference,
+    'includes': lodash.includes,
+    'intersection': lodash.intersection,
+    'omit': lodash.omit,
+    'pull': lodash.pull,
+    'union': lodash.union,
+    'uniq': lodash.uniq,
+    'uniqBy': lodash.uniqBy,
+    'without': lodash.without,
+    'xor': lodash.xor
   });
 
+  // Iterate over methods for the current ary cap.
   var pairs = [];
   each(listing.caps, function(cap) {
-    // Iterate over methods for the current ary cap.
     each(mapping.aryMethodMap[cap], function(name) {
       var func = _[mapping.keyMap[name] || name];
       if (func) {
