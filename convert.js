@@ -1,8 +1,6 @@
 var baseConvert = require('./lib/baseConvert.js'),
     util = require('./lib/util');
 
-/*----------------------------------------------------------------------------*/
-
 /**
  * Converts `func` of `name` to an auto-curried iteratee-first data-last version.
  * If `name` is an object, the methods on it will be converted and the object returned.
