@@ -24,7 +24,7 @@
   },
   "devDependencies": {
     "qunit-extras": "~1.4.0",
-    "qunitjs": "~1.18.0",
+    "qunitjs": "~1.19.0",
     "uglify-js": "2.4.24",
     "webpack": "^1.0.0"
   },
