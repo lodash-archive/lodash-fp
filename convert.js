@@ -7,7 +7,7 @@ var baseConvert = require('./lib/baseConvert.js'),
  *
  * @param {string} name The name of the function to wrap.
  * @param {Function} func The function to wrap.
- * @returns {Function|Object} Returns the new converted function or object.
+ * @returns {Function|Object} Returns the converted function or object.
  */
 function convert(name, func) {
   return baseConvert(util, name, func);
