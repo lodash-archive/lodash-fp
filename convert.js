@@ -22,7 +22,7 @@ function convert(lodash, name, func) {
   }
   var ary = lodash.ary,
       curry = lodash.curry,
-      each = lodash.forEach,
+      each = lodash.each,
       isFunction = lodash.isFunction,
       keys = lodash.keys,
       rearg = lodash.rearg;
@@ -159,7 +159,7 @@ function convert(lodash, name, func) {
         // Wrap the lodash method and its aliases.
         var wrapped = wrap(name, func);
         pairs.push([name, wrapped]);
-        each(mapping.aliasMap[name], function(alias) { pairs.push([alias, wrapped]); });
+        each(mapping.aliasMap[name] || [], function(alias) { pairs.push([alias, wrapped]); });
       }
     });
   });
