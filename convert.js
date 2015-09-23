@@ -20,12 +20,24 @@ function convert(lodash, name, func) {
   if (func == null) {
     throw new TypeError;
   }
-  var ary = lodash.ary,
-      curry = lodash.curry,
-      each = lodash.each,
-      isFunction = lodash.isFunction,
-      keys = lodash.keys,
-      rearg = lodash.rearg;
+  var isLib = name == null && typeof func.VERSION == 'string';
+
+  var _ = isLib ? func : {
+    'ary': lodash.ary,
+    'curry': lodash.curry,
+    'forEach': lodash.forEach,
+    'isFunction': lodash.isFunction,
+    'iteratee': lodash.iteratee,
+    'keys': lodash.keys,
+    'rearg': lodash.rearg
+  };
+
+  var ary = _.ary,
+      curry = _.curry,
+      each = _.forEach,
+      isFunction = _.isFunction,
+      keys = _.keys,
+      rearg = _.rearg;
 
   var baseAry = function(func, n) {
     return function() {
@@ -131,12 +143,10 @@ function convert(lodash, name, func) {
     return result || func;
   };
 
-  var isLib = name == null && typeof func.VERSION == 'string';
   if (!isLib) {
     return wrap(name, func);
   }
   // Disable custom `_.indexOf` use by these methods.
-  var _ = func;
   _.mixin({
     'difference': lodash.difference,
     'includes': lodash.includes,
