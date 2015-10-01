@@ -30,8 +30,11 @@
     "webpack": "^1.0.0"
   },
   "files": [
+    "lib/baseConvert.js",
+    "lib/bowerConvert.js",
     "lib/listing.js",
     "lib/mapping.js",
+    "lib/util.js",
     "convert.js",
     "index.js"
   ]
