@@ -16,7 +16,7 @@
   ],
   "repository": "lodash/lodash-fp",
   "scripts": {
-    "build": "webpack --hide-modules --optimize-dedup --optimize-occurence-order --output-library _ --output-library-target umd . dist/lodash-fp.js && uglifyjs $_ -m -c \"comparisons=false,keep_fargs=true,pure_getters=true,unsafe=true,unsafe_comps=true,warnings=false\" -b \"ascii_only=true,beautify=false,max_line_len=500\" -o dist/lodash-fp.min.js",
+    "build": "node ./lib/build.js",
     "test": "echo \"See the repository CONTRIBUTING.md for testing instructions.\""
   },
   "dependencies": {
@@ -25,6 +25,7 @@
   "devDependencies": {
     "qunit-extras": "~1.4.0",
     "qunitjs": "~1.19.0",
+    "run-series": "^1.1.4",
     "uglify-js": "2.4.24",
     "webpack": "^1.0.0"
   },
