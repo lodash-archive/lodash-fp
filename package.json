@@ -20,13 +20,13 @@
     "test": "echo \"See the repository CONTRIBUTING.md for testing instructions.\""
   },
   "dependencies": {
-    "lodash": "^4.0.0"
+    "lodash": "^3.10.1"
   },
   "devDependencies": {
     "async": "^1.4.2",
     "qunit-extras": "~1.4.0",
     "qunitjs": "~1.19.0",
-    "uglify-js": "2.4.24",
+    "uglify-js": "2.5.0",
     "webpack": "^1.0.0"
   },
   "files": [
