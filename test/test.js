@@ -257,6 +257,19 @@ QUnit.module('fp.difference');
 
 /*----------------------------------------------------------------------------*/
 
+QUnit.module('fp.fill');
+
+(function() {
+  QUnit.test('should have an argument order of `start`, `end`, then `value`', function(assert) {
+    assert.expect(1);
+
+    var array = [1, 2, 3];
+    assert.deepEqual(fp.fill(1)(2)('*')(array), [1, '*', 3]);
+  });
+}());
+
+/*----------------------------------------------------------------------------*/
+
 QUnit.module('fp.flow and fp.flowRight');
 
 _.each(['flow', 'flowRight'], function(methodName, index) {
@@ -297,6 +310,18 @@ _.each(['flow', 'flowRight'], function(methodName, index) {
     });
   });
 });
+
+/*----------------------------------------------------------------------------*/
+
+QUnit.module('fp.inRange');
+
+(function() {
+  QUnit.test('should have an argument order of `start`, `end`, then `value`', function(assert) {
+    assert.expect(1);
+
+    assert.strictEqual(fp.inRange(2)(4)(3), true);
+  });
+}());
 
 /*----------------------------------------------------------------------------*/
 
