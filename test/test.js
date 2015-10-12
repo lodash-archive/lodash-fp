@@ -49,7 +49,7 @@ QUnit.module('method ary caps');
         expected = _.map(mapping.aryMethodMap[1], _.constant(true));
 
     var actual = _.map(mapping.aryMethodMap[1], function(methodName) {
-      var arg = _.includes(funcMethods, methodName) ? _.noop : '',
+      var arg = _.includes(funcMethods, methodName) ? _.noop : 1,
           result = _.attempt(function() { return fp[methodName](arg); });
 
       if (_.includes(exceptions, methodName)
@@ -394,6 +394,24 @@ QUnit.module('fp.mixin');
 
     fp.each = each1;
     fp.prototype.each = each2;
+  });
+
+  QUnit.test('should not export to the global when `source` is not an object', function(assert) {
+    assert.expect(2);
+
+    var props = _.without(_.keys(_), '_');
+
+    _.times(2, function(index) {
+      fp.mixin.apply(fp, index ? [1] : []);
+
+      assert.ok(_.every(props, function(key) {
+        return global[key] !== fp[key];
+      }));
+
+      _.each(props, function(key) {
+        delete global[key];
+      });
+    });
   });
 
   QUnit.test('should convert by name', function(assert) {
