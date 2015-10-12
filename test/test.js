@@ -44,8 +44,12 @@ QUnit.module('method ary caps');
   QUnit.test('should have a cap of 1', function(assert) {
     assert.expect(1);
 
-    var funcMethods = ['curry', 'memoize', 'method', 'methodOf', 'restParam'],
-        exceptions = funcMethods.concat('mixin', 'template'),
+    var funcMethods = [
+      'curry', 'iteratee', 'memoize', 'method', 'methodOf',
+      'restParam', 'runInContext'
+    ];
+
+    var exceptions = funcMethods.concat('mixin', 'template'),
         expected = _.map(mapping.aryMethodMap[1], _.constant(true));
 
     var actual = _.map(mapping.aryMethodMap[1], function(methodName) {
