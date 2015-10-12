@@ -603,8 +603,8 @@ QUnit.module('mutation methods');
     assert.deepEqual(actual, { 'a': 1, 'b': 2 }, 'fp.extend');
 
     value = _.clone(object);
-    actual = fp.extendWith(function(value, other) {
-      return other;
+    actual = fp.extendWith(function(objValue, srcValue) {
+      return srcValue;
     }, new Foo, value);
 
     assert.deepEqual(value, object, 'fp.extendWith');
@@ -623,9 +623,9 @@ QUnit.module('mutation methods');
     assert.deepEqual(actual, { 'a': { 'b': 2, 'c': 3 } }, 'fp.merge');
 
     value = { 'a': [1] };
-    actual = fp.mergeWith(function(value, other) {
-      if (_.isArray(value)) {
-        return value.concat(other);
+    actual = fp.mergeWith(function(objValue, srcValue) {
+      if (_.isArray(objValue)) {
+        return objValue.concat(srcValue);
       }
     }, { 'a': [2, 3] }, value);
 
@@ -663,6 +663,54 @@ QUnit.module('mutation methods');
 
     assert.deepEqual(value, array, 'fp.reverse');
     assert.deepEqual(actual, [3, 2, 1], 'fp.reverse');
+  });
+}());
+
+/*----------------------------------------------------------------------------*/
+
+QUnit.module('with methods');
+
+(function() {
+  var array = [1, 2, 3],
+      object = { 'a': 1 };
+
+  QUnit.test('should provice the correct `customizer` arguments', function(assert) {
+    assert.expect(3);
+
+    var args,
+        value = _.clone(object);
+
+    var actual = fp.assignWith(function(objValue, srcValue) {
+      args || (args = _.map(arguments, _.cloneDeep));
+      return srcValue;
+    }, { 'b': 2 }, value);
+
+    assert.deepEqual(args, [undefined, 2, 'b', { 'a': 1 }, { 'b': 2 }], 'fp.assignWith');
+
+    args = null;
+    value = _.clone(object);
+
+    actual = fp.extendWith(function(objValue, srcValue) {
+      args || (args = _.map(arguments, _.cloneDeep));
+      return srcValue;
+    }, { 'b': 2 }, value);
+
+    assert.deepEqual(args, [undefined, 2, 'b', { 'a': 1 }, { 'b': 2 }], 'fp.extendWith');
+
+    args = null;
+    value = { 'a': [1] };
+
+    var stack = { '__data__': { 'array': [], 'map': null } },
+        expected = [[1], [2, 3], 'a', { 'a': [ 1 ] }, { 'a': [2, 3] }, stack];
+
+    actual = fp.mergeWith(function(objValue, srcValue) {
+      args || (args = _.map(arguments, _.cloneDeep));
+      if (_.isArray(objValue)) {
+        return objValue.concat(srcValue);
+      }
+    }, { 'a': [2, 3] }, value);
+
+    assert.deepEqual(args, expected, 'fp.mergeWith');
   });
 }());
 
