@@ -73,8 +73,8 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var listing = __webpack_require__(2),
-	    mapping = __webpack_require__(3);
+	var mapping = __webpack_require__(2),
+	    mutateMap = mapping.mutateMap;
 
 	/**
 	 * The base implementation of `convert` which accepts a `util` object of methods
@@ -129,6 +129,42 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	  };
 
+	  var immutArrayWrap = function(func) {
+	    return function() {
+	      var index = -1,
+	          length = arguments.length,
+	          args = Array(length);
+
+	      while (length--) {
+	        args[length] = arguments[length];
+	      }
+	      var array = args[0];
+	      length = array ? array.length : 0;
+
+	      args[0] = Array(length);
+	      while (++index < length) {
+	        args[0][index] = array[index];
+	      }
+	      func.apply(undefined, args);
+	      return args[0];
+	    };
+	  };
+
+	  var immutObjectWrap = function(func) {
+	    return function() {
+	      var index = -1,
+	          length = arguments.length,
+	          args = Array(length);
+
+	      while (++index < length) {
+	        args[index] = arguments[index];
+	      }
+	      args[0] = func({}, args[0]);
+	      func.apply(undefined, args);
+	      return args[0];
+	    };
+	  };
+
 	  var iterateeAry = function(func, n) {
 	    return function() {
 	      var length = arguments.length,
@@ -155,7 +191,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return function(source) {
 	        var func = this;
 	        if (!isFunction(func)) {
-	          return mixin(func, source);
+	          return mixin(func, Object(source));
 	        }
 	        var methods = [],
 	            methodNames = [];
@@ -168,7 +204,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	          }
 	        });
 
-	        mixin(func, source);
+	        mixin(func, Object(source));
 
 	        each(methodNames, function(methodName, index) {
 	          var method = methods[index];
@@ -193,13 +229,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (wrapper) {
 	      return wrapper(func);
 	    }
+	    if (mutateMap.array[name]) {
+	      func = immutArrayWrap(func);
+	    }
+	    else if (mutateMap.object[name]) {
+	      func = immutObjectWrap(func);
+	    }
 	    var result;
-	    each(listing.caps, function(cap) {
+	    each(mapping.caps, function(cap) {
 	      each(mapping.aryMethodMap[cap], function(otherName) {
 	        if (name == otherName) {
 	          result = ary(func, cap);
 	          if (cap > 1 && !mapping.skipReargMap[name]) {
-	            result = rearg(result, mapping.aryReargMap[cap]);
+	            result = rearg(result, mapping.methodReargMap[name] || mapping.aryReargMap[cap]);
 	          }
 	          var n = !isLib && mapping.aryIterateeMap[name];
 	          if (n) {
@@ -219,23 +261,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  if (!isLib) {
 	    return wrap(name, func);
 	  }
-	  // Disable custom `_.indexOf` use by these methods.
-	  _.mixin({
-	    'difference': util.difference,
-	    'includes': util.includes,
-	    'intersection': util.intersection,
-	    'omit': util.omit,
-	    'pull': util.pull,
-	    'union': util.union,
-	    'uniq': util.uniq,
-	    'uniqBy': util.uniqBy,
-	    'without': util.without,
-	    'xor': util.xor
-	  });
-
 	  // Iterate over methods for the current ary cap.
 	  var pairs = [];
-	  each(listing.caps, function(cap) {
+	  each(mapping.caps, function(cap) {
 	    each(mapping.aryMethodMap[cap], function(name) {
 	      var func = _[mapping.keyMap[name] || name];
 	      if (func) {
@@ -248,27 +276,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	  });
 
 	  // Assign to `_` leaving `_.prototype` unchanged to allow chaining.
-	  _.iteratee = wrappers.iteratee(_.iteratee);
-	  _.mixin = wrappers.mixin(_.mixin);
-	  _.runInContext = wrappers.runInContext(_.runInContext);
-
 	  each(pairs, function(pair) { _[pair[0]] = pair[1]; });
 	  return _;
 	}
 
-	module.exports = convert;
+	module.exports = baseConvert;
 
 
 /***/ },
 /* 2 */
-/***/ function(module, exports) {
-
-	/** Used to iterate `mapping.aryMethodMap` keys. */
-	exports.caps = ['1', '2', '3', '4'];
-
-
-/***/ },
-/* 3 */
 /***/ function(module, exports) {
 
 	module.exports = {
@@ -284,7 +300,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'assignWith': 2,
 	    'cloneDeepWith': 1,
 	    'cloneWith': 1,
-	    'countBy': 1,
 	    'dropRightWhile': 1,
 	    'dropWhile': 1,
 	    'every': 1,
@@ -302,40 +317,29 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'forInRight': 1,
 	    'forOwn': 1,
 	    'forOwnRight': 1,
-	    'groupBy': 1,
-	    'indexBy': 1,
 	    'isEqualWith': 2,
 	    'isMatchWith': 2,
 	    'map': 1,
 	    'mapKeys': 1,
 	    'mapValues': 1,
-	    'maxBy': 1,
-	    'minBy': 1,
-	    'omitBy': 1,
 	    'partition': 1,
-	    'pickBy': 1,
 	    'reduce': 2,
 	    'reduceRight': 2,
 	    'reject': 1,
 	    'remove': 1,
 	    'some': 1,
-	    'sortBy': 1,
-	    'sortByOrder': 1,
-	    'sortedIndexBy': 1,
-	    'sortedLastIndexBy': 1,
-	    'sumBy': 1,
 	    'takeRightWhile': 1,
 	    'takeWhile': 1,
 	    'times': 1,
-	    'transform': 2,
-	    'uniqBy': 1
+	    'transform': 2
 	  },
 
 	  /** Used to map ary to method names. */
 	  'aryMethodMap': {
 	    1: (
-	      'attempt,ceil,create,curry,floor,invert,memoize,method,methodOf,restParam,' +
-	      'round,sample,template,trim,trimLeft,trimRight,words,zipObject').split(','),
+	      'attempt,ceil,create,curry,floor,iteratee,invert,memoize,method,methodOf,' +
+	      'mixin,restParam,reverse,round,runInContext,template,trim,trimLeft,trimRight,' +
+	      'words,zipObject').split(','),
 	    2: (
 	      'ary,assign,at,bind,bindKey,cloneDeepWith,cloneWith,countBy,curryN,debounce,' +
 	      'defaults,defaultsDeep,delay,difference,drop,dropRight,dropRightWhile,' +
@@ -343,37 +347,72 @@ return /******/ (function(modules) { // webpackBootstrap
 	      'findLastIndex,findLastKey,forEach,forEachRight,forIn,forInRight,forOwn,' +
 	      'forOwnRight,get,groupBy,includes,indexBy,indexOf,intersection,invoke,' +
 	      'isMatch,lastIndexOf,map,mapKeys,mapValues,maxBy,minBy,merge,omit,pad,padLeft,' +
-	      'padRight,parseInt,partition,pick,pull,pullAt,random,range,rearg,reject,' +
-	      'remove,repeat,result,set,some,sortBy,sortByOrder,sortedIndexBy,sortedLastIndexBy,' +
-	      'sortedUniqBy,startsWith,sumBy,take,takeRight,takeRightWhile,takeWhile,throttle,' +
-	      'times,trunc,union,uniqBy,uniqueId,without,wrap,xor,zip').split(','),
+	      'padRight,parseInt,partition,pick,pull,pullAll,pullAt,random,range,rearg,reject,' +
+	      'remove,repeat,result,sampleSize,set,some,sortBy,sortByOrder,sortedIndexBy,' +
+	      'sortedLastIndexBy,sortedUniqBy,startsWith,sumBy,take,takeRight,takeRightWhile,' +
+	      'takeWhile,throttle,times,trunc,union,uniqBy,uniqueId,without,wrap,xor,zip').split(','),
 	    3: (
-	      'assignWith,extendWith,isEqualWith,isMatchWith,omitBy,pickBy,reduce,' +
-	      'reduceRight,slice,transform,zipWith').split(','),
+	      'assignWith,differenceBy,extendWith,inRange,intersectionBy,isEqualWith,' +
+	      'isMatchWith,mergeWith,omitBy,pickBy,pullAllBy,reduce,reduceRight,slice,' +
+	      'transform,unionBy,xorBy,zipWith').split(','),
 	    4:
-	      ['fill', 'inRange']
+	      ['fill']
 	  },
 
-	  /** Used to map ary to rearg configs. */
+	  /** Used to map ary to rearg configs by method ary. */
 	  'aryReargMap': {
 	    2: [1, 0],
-	    3: [2, 0, 1],
+	    3: [2, 1, 0],
 	    4: [3, 2, 0, 1]
 	  },
+
+	  /** Used to map ary to rearg configs by method names. */
+	  'methodReargMap': {
+	    'reduce': [2, 0, 1],
+	    'reduceRight': [2, 0, 1],
+	    'slice': [2, 0, 1],
+	    'transform': [2, 0, 1]
+	  },
+
+	  /** Used to iterate `mapping.aryMethodMap` keys. */
+	  'caps': ['1', '2', '3', '4'],
 
 	  /** Used to map keys to other keys. */
 	  'keyMap': {
 	    'curryN': 'curry',
+	    'curryRightN': 'curryRight',
 	    'debounceOpt': 'debounce',
-	    'sampleN': 'sample',
 	    'throttleOpt': 'throttle'
+	  },
+
+	  /** Used to identify methods which mutate arrays or objects. */
+	  'mutateMap': {
+	    'array': {
+	      'fill': true,
+	      'pull': true,
+	      'pullAll': true,
+	      'pullAllBy': true,
+	      'pullAt': true,
+	      'remove': true,
+	      'reverse': true
+	    },
+	    'object': {
+	      'assign': true,
+	      'assignWith': true,
+	      'defaults': true,
+	      'defaultsDeep': true,
+	      'extend': true,
+	      'extendWith': true,
+	      'merge': true,
+	      'mergeWith': true
+	    }
 	  },
 
 	  /** Used to track methods that skip `_.rearg`. */
 	  'skipReargMap': {
 	    'difference': true,
-	    'range': true,
 	    'random': true,
+	    'range': true,
 	    'zipObject': true
 	  }
 	};
