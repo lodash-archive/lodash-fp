@@ -1,5 +1,5 @@
-var listing = require('./lib/listing.js'),
-    mapping = require('./lib/mapping.js');
+var listing = require('./lib/listing'),
+    mapping = require('./lib/mapping');
 
 /*----------------------------------------------------------------------------*/
 

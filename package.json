@@ -1,32 +1,22 @@
 {
   "name": "lodash-fp",
-  "version": "0.10.2",
-  "description": "lodash with more functional fun.",
+  "version": "0.10.3",
+  "description": "Lodash with more functional fun.",
   "icon": "https://lodash.com/icon.svg",
   "license": "MIT",
   "main": "index.js",
-  "keywords": "functional, stdlib, util",
   "author": "John-David Dalton <john.david.dalton@gmail.com> (http://allyoucanleet.com/)",
   "contributors": [
     "John-David Dalton <john.david.dalton@gmail.com> (http://allyoucanleet.com/)",
-    "Benjamin Tan <demoneaux@gmail.com> (https://d10.github.io/)",
-    "Blaine Bublitz <blaine@iceddev.com> (http://www.iceddev.com/)",
-    "Kit Cambridge <github@kitcambridge.be> (http://kitcambridge.be/)",
+    "Blaine Bublitz <blaine.bublitz@gmail.com> (https://github.com/phated)",
     "Mathias Bynens <mathias@qiwi.be> (https://mathiasbynens.be/)"
   ],
   "repository": "lodash/lodash-fp",
   "scripts": {
-    "build": "webpack --hide-modules --optimize-dedup --optimize-occurence-order --output-library _ --output-library-target umd . dist/lodash-fp.js && uglifyjs $_ -m -c \"comparisons=false,keep_fargs=true,pure_getters=true,unsafe=true,unsafe_comps=true,warnings=false\" -b \"ascii_only=true,beautify=false,max_line_len=500\" -o dist/lodash-fp.min.js",
-    "test": "echo \"See the repository CONTRIBUTING.md for testing instructions.\""
+    "test": "echo \"This package has been discontinued.\""
   },
   "dependencies": {
-    "lodash-compat": "^3.0.0"
-  },
-  "devDependencies": {
-    "qunit-extras": "~1.4.0",
-    "qunitjs": "~1.18.0",
-    "uglify-js": "2.4.24",
-    "webpack": "^1.0.0"
+    "lodash-compat": "^3.10.2"
   },
   "files": [
     "lib/listing.js",
