@@ -1,4 +1,4 @@
-# lodash-fp v0.10.3
+# lodash-fp v0.10.4
 
 The [lodash](https://lodash.com/) library with auto-curried iteratee-first data-last methods.
 
@@ -29,4 +29,4 @@ _.map(parseInt)(['6', '08', '10']);
 // => [6, 8, 10]
 ```
 
-See the [package source](https://github.com/lodash/lodash-fp/tree/0.10.3) for more details.
+See the [package source](https://github.com/lodash/lodash-fp/tree/0.10.4) for more details.
