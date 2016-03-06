@@ -4,7 +4,7 @@ The [lodash](https://lodash.com/) library with auto-curried iteratee-first data-
 
 ## Discontinued
 
-This package has been discontinued in favor of [lodash/fp](https://github.com/lodash/lodash/tree/npm/fp).
+This package has been discontinued in favor of [lodash/fp](https://github.com/lodash/lodash/wiki/FP-Guide).
 
 ## Installation
 
